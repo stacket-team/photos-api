@@ -4,7 +4,7 @@ const cors = require('cors')
 const graphqlHTTP = require('express-graphql')
 const mongoose = require('mongoose')
 const { PubSub } = require('graphql-subscriptions')
-const models = require('./models')
+const { models } = require('./models')
 const { schema } = require('./schema')
 
 const { mongoURI: db } = process.env
