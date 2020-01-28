@@ -1,15 +1,13 @@
 require('dotenv').config()
 const express = require('express')
-const path = require('path')
 const { ApolloServer, PubSub } = require('apollo-server-express')
 const mongoose = require('mongoose')
-const { models } = require('./models')
-const { schema } = require('./schema')
+const path = require('path')
 
 const { NODE_ENV: env, MONGO_URI: db } = process.env
 
 const pubsub = new PubSub()
-
+const { models, schema } = require('./server')
 const context = {
   models,
   pubsub
@@ -39,11 +37,11 @@ if (env === 'production') {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Express is working on https://localhost:${port}/`)
-  console.log(`Graphql endpoint: https://localhost:${port}/graphql`)
+  console.log(`Express is working on http://localhost:${port}/`)
+  console.log(`Graphql endpoint: http://localhost:${port}/graphql`)
   if (env === 'production') {
-    console.log(`Dashboard: https://localhost:${port}/`);
+    console.log(`Dashboard: http://localhost:${port}/`);
   } else {
-    console.log(`Dashboard: https://localhost:3000/`)
+    console.log(`Dashboard: http://localhost:3000/`)
   }
 })
