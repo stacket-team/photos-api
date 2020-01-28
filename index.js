@@ -1,9 +1,6 @@
 require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const graphqlHTTP = require('express-graphql')
+const { ApolloServer, PubSub } = require('apollo-server')
 const mongoose = require('mongoose')
-const { PubSub } = require('graphql-subscriptions')
 const { models } = require('./models')
 const { schema } = require('./schema')
 
@@ -24,11 +21,8 @@ mongoose
   .then(() => console.log('MongoDB connected'))
   .catch(error => console.error(error))
 
-const app = express()
-app.use(cors())
+const server = new ApolloServer({ schema, context })
 
-app.use('/graphql', graphqlHTTP({ schema, context }))
-
-const port = process.env.PORT || 4000
-app.listen(port)
-console.log(`Running a GraphQL API server at http://localhost:${port}/graphql`)
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`)
+})
