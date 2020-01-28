@@ -7,7 +7,7 @@ const User = `
   }
 
   type Query {
-    user(_id: ID!): User!
+    user(_id: ID, name: String): User!
     users: [User!]!
   }
 

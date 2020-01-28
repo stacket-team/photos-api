@@ -4,8 +4,10 @@ const { User, Photo } = models
 module.exports = {
   User: {
     Query: {
-      user: async (parent, { _id }, context, info) => {
-        return await User.findOne({ _id }).exec()
+      user: async (parent, { _id, name }, context, info) => {
+        return _id
+          ? await User.findOne({ _id }).exec()
+          : await User.findOne({ name }).exec()
       },
       users: async (parent, args, context, info) => {
         const users = await User.find({})
@@ -49,11 +51,11 @@ module.exports = {
           })
         })
       }
+    },
+    User: {
+      photos: async ({ _id }, args, context, info) => {
+        return await Photo.find({ author: _id })
+      }
     }
-    // User: {
-    //   photos: async ({ _id }, args, context, info) => {
-    //     return await Photo.find({ author: _id });
-    //   },
-    // }
   }
 }
