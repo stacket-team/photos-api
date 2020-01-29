@@ -3,8 +3,25 @@ const express = require('express')
 const { ApolloServer, PubSub } = require('apollo-server-express')
 const mongoose = require('mongoose')
 const path = require('path')
+const http = require('http')
+const https = require('https')
 
-const { NODE_ENV: env, MONGO_URI: db } = process.env
+const configurations = {
+  production: { react: true, ssl: false, port: 80, hostname: 'localhost', db: 'mongodb://localhost:27017/photos-api'},
+  development: { react: false, ssl: false, port: 5000, hostname: 'localhost', db: 'mongodb://localhost:27017/photos-api'}
+}
+
+const environment = process.env.NODE_ENV || 'production'
+const config = configurations[environment]
+
+mongoose
+  .connect(config.db, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log(`MongoDB is connected on ${config.db}`))
+  .catch(error => console.error(error))
 
 const pubsub = new PubSub()
 const { models, schema } = require('./server')
@@ -13,35 +30,44 @@ const context = {
   pubsub
 }
 
-mongoose
-  .connect(db, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => console.log(`MongoDB is connected on ${db}`))
-  .catch(error => console.error(error))
-
-const server = new ApolloServer({ schema, context })
+const apollo = new ApolloServer({ schema, context })
 
 const app = express()
+apollo.applyMiddleware({ app })
 
-server.applyMiddleware({ app, path: '/graphql' })
-
-if (env === 'production') {
+if (config.react) {
   app.use(express.static(path.join(__dirname, 'client/build')))
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build/index.html'))
   })
 } 
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Express is working on http://localhost:${port}/`)
-  console.log(`Graphql endpoint: http://localhost:${port}/graphql`)
-  if (env === 'production') {
-    console.log(`Dashboard: http://localhost:${port}/`);
-  } else {
-    console.log(`Dashboard: http://localhost:3000/`)
+let server
+if (config.ssl) {
+  server = https.createServer(
+    {
+      key: fs.readFileSync(`./ssl/${environment}/server.key`),
+      cert: fs.readFileSync(`./ssl/${environment}/server.crt`)
+    },
+    app
+  )
+} else {
+  server = http.createServer(app)
+}
+
+server.listen({ port: config.port }, () => {
+  console.log(
+    'Server ready at',
+    `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}/`
+  )
+  console.log(
+    'Graphql endpoint ready at',
+    `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${apollo.graphqlPath}`
+  )
+  if (config.react) {
+    console.log(
+      'React ready at',
+      `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}/`
+    )
   }
 })
