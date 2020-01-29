@@ -3,29 +3,27 @@ const User = `
     _id: String!
     name: String!
     password: String!
+    role: String!
     photos: [Photo!]!
   }
 
   type Query {
-    user(_id: ID, name: String): User!
+    currentUser: User
+    user(_id: ID, name: String): User
     users: [User!]!
   }
 
   type Mutation {
-    createUser(user: CreateUserInput): User!
-    updateUser(_id: String!, user: UpdateUserInput!): User!
+    login(name: String!, password: String!): LoginResponse!
+    createUser(name: String!, password: String!): User!
+    updateUser(_id: String!, name: String, password: String): User!
     deleteUser(_id: String!): User
   }
 
-  input CreateUserInput {
-    name: String!
-    password: String!
+  type LoginResponse {
+    token: String
+    user: User
   }
-  
-  input UpdateUserInput {
-    name: String
-    password: String
-  } 
 `
 
 module.exports = {

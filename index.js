@@ -1,10 +1,11 @@
 require('dotenv').config()
 const express = require('express')
-const { ApolloServer, PubSub } = require('apollo-server-express')
+const { ApolloServer } = require('apollo-server-express')
 const mongoose = require('mongoose')
 const path = require('path')
 const http = require('http')
 const https = require('https')
+const jwt = require('jsonwebtoken')
 
 const configurations = {
   production: { react: true, ssl: false, port: 80, hostname: 'localhost', db: 'mongodb://localhost:27017/photos-api'},
@@ -18,19 +19,34 @@ mongoose
   .connect(config.db, {
     useCreateIndex: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   .then(() => console.log(`MongoDB is connected on ${config.db}`))
   .catch(error => console.error(error))
 
-const pubsub = new PubSub()
-const { models, schema } = require('./server')
-const context = {
-  models,
-  pubsub
+const getUser = token => {
+  try {
+    if (token) {
+      return jwt.verify(token, process.env.SECRET)
+    }
+    return null
+  } catch (err) {
+    return null
+  }
 }
 
-const apollo = new ApolloServer({ schema, context })
+const { models, schema } = require('./server')
+const apollo = new ApolloServer({ 
+  schema, 
+  context: ({ req }) => {
+    const tokenWithBearer = req.headers.authorization || ''
+    const token = tokenWithBearer.split(' ')[1]
+    const user = getUser(token)
+
+    return { user }
+  }
+})
 
 const app = express()
 apollo.applyMiddleware({ app })

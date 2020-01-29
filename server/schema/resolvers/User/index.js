@@ -1,16 +1,24 @@
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const { models } = require('../../../models')
 const { User, Photo } = models
 
 module.exports = {
   User: {
     Query: {
-      user: async (parent, { _id, name }, context, info) => {
+      currentUser: async (parent, args, { user }, info) => {
+        if (!user) throw new Error('Not authorized')
+        return await User.findOne({ _id: user._id }).exec()
+      },
+      user: async (parent, { _id, name }, { user }, info) => {
+        if (!user || (_id ? user._id !== _id : user.name !== name) || user.role !== 'admin') throw new Error('Not authorized')
         return _id
           ? await User.findOne({ _id }).exec()
-          : await User.findOne({ name }).exec()
+          : await User.findOne({ name, role: 'user' }).exec()
       },
-      users: async (parent, args, context, info) => {
-        const users = await User.find({})
+      users: async (parent, args, { user }, info) => {
+        if (!user || user.role !== 'admin') throw new Error('Not authorized')
+        const users = await User.find({ role: 'user' })
           .populate()
           .exec()
 
@@ -18,15 +26,48 @@ module.exports = {
           _id: u._id.toString(),
           name: u.name,
           password: u.password,
+          role: u.role,
           photos: u.photos
         }))
       }
     },
     Mutation: {
-      createUser: async (parent, { user }, context, info) => {
+      login: async (parent, { name, password }, context, info) => {
+        const user = await User.findOne({ name }).exec()
+
+        if (!user) {
+          throw new Error('Invalid Login')
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password)
+
+        if (!passwordMatch) {
+          throw new Error('Invalid Login')
+        }
+
+        const token = jwt.sign(
+          {
+            _id: user._id,
+            name: user.name,
+            role: user.role
+          },
+          process.env.SECRET,
+          {
+            expiresIn: '30d',
+          },
+        )
+
+        return {
+          token,
+          user,
+        }
+      },
+      createUser: async (parent, { name, password }, { user }, info) => {
+        if (!user || user.role !== 'admin') throw new Error('Not authorized')
+        const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = await new User({
-          name: user.name,
-          password: user.password
+          name,
+          password: hashedPassword
         })
 
         return new Promise((resolve, reject) => {
@@ -35,25 +76,31 @@ module.exports = {
           })
         })
       },
-      updateUser: async (parent, { _id, user }, context, info) => {
+      updateUser: async (parent, { _id, name, password }, { user }, info) => {
+        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
+        const $set = {}
+        if (name) $set.name = name
+        if (password) $set.password = await bcrypt.hash(password, 10)
         return new Promise((resolve, reject) => {
-          User.findByIdAndUpdate(_id, { $set: { ...user } }, { new: true }).exec(
+          User.findOneAndUpdate({ _id }, { $set }, { new: true }).exec( 
             (err, res) => {
               err ? reject(err) : resolve(res)
             }
           )
         })
       },
-      deleteUser: async (parent, { _id }, context, info) => {
+      deleteUser: async (parent, { _id }, { user }, info) => {
+        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
-          User.findByIdAndDelete(_id).exec((err, res) => {
+          User.findOneAndDelete({ _id }).exec((err, res) => {
             err ? reject(err) : resolve(res)
           })
         })
       }
     },
     User: {
-      photos: async ({ _id }, args, context, info) => {
+      photos: async ({ _id }, args, { user }, info) => {
+        if (!user) throw new Error('Not authorized')
         return await Photo.find({ author: _id })
       }
     }
