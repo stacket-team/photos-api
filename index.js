@@ -1,24 +1,47 @@
+require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
-const graphqlHTTP = require('express-graphql')
-const gql = require('graphql-tag')
-const { buildASTSchema } = require('graphql')
+const { ApolloServer, PubSub } = require('apollo-server-express')
+const mongoose = require('mongoose')
+const path = require('path')
 
-const app = express()
-app.use(cors())
+const { NODE_ENV: env, MONGO_URI: db } = process.env
 
-const schema = buildASTSchema(gql`
-  type Query {
-    hello: String
-  }
-`)
-
-const rootValue = {
-  hello: () => 'Hello, world'
+const pubsub = new PubSub()
+const { models, schema } = require('./server')
+const context = {
+  models,
+  pubsub
 }
 
-app.use('/graphql', graphqlHTTP({ schema, rootValue }))
+mongoose
+  .connect(db, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log(`MongoDB is connected on ${db}`))
+  .catch(error => console.error(error))
 
-const port = process.env.PORT || 4000
-app.listen(port)
-console.log(`Running a GraphQL API server at http://localhost:${port}/graphql`)
+const server = new ApolloServer({ schema, context })
+
+const app = express()
+
+server.applyMiddleware({ app, path: '/graphql' })
+
+if (env === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')))
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'))
+  })
+} 
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Express is working on http://localhost:${port}/`)
+  console.log(`Graphql endpoint: http://localhost:${port}/graphql`)
+  if (env === 'production') {
+    console.log(`Dashboard: http://localhost:${port}/`);
+  } else {
+    console.log(`Dashboard: http://localhost:3000/`)
+  }
+})

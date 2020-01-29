@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon .",
-    "test": "standard"
+    "start": "cross-env NODE_ENV=production node .",
+    "server": "nodemon .",
+    "client": "npm start --prefix client",
+    "develop": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
   },
   "repository": {
     "type": "git",
@@ -25,11 +28,17 @@
   },
   "homepage": "https://github.com/stacket-team/photos-api#readme",
   "dependencies": {
-    "cors": "^2.8.5",
+    "apollo-server-express": "^2.9.16",
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
     "express": "^4.17.1",
-    "express-graphql": "^0.9.0",
     "graphql": "^14.6.0",
-    "graphql-tag": "^2.10.1"
+    "graphql-tools": "^4.0.6",
+    "merge-graphql-schemas": "^1.7.6",
+    "mongoose": "^5.8.9",
+    "styled-components": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2",
