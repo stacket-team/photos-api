@@ -1,5 +1,7 @@
 import React from 'react';
 import ApolloClient, { gql } from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks';
+import Query from "./components/Query";
 
 const client = new ApolloClient({
   uri: 'http://localhost:5000/graphql'
@@ -17,6 +19,10 @@ client
   })
   .then(res => console.log(res));
 
-const Root = () => <h1>hello world</h1>;
+const Root = () => (
+  <ApolloProvider client={client}>
+    <Query />
+  </ApolloProvider>
+);
 
 export default Root;
