@@ -11,17 +11,18 @@ const USERS = gql`
     }
 `;
 
-const Query = () => {
-  const { loading, error ,data } = useQuery(USERS);
+const ShowUsers = () => {
+  const { loading, error, data } = useQuery(USERS);
 
   if (loading) return <p>Loading data...</p>;
-  if (error) return <p>Error :c</p>;
+  if (error) return <p>Error :c {error.message}</p>;
 
   return data.users.map(({ _id, name }) => (
     <div key={_id}>
+      <p>{_id}</p>
       <p>{name}</p>
     </div>
   ));
 };
 
-export default Query;
+export default ShowUsers;

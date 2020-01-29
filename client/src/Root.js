@@ -1,7 +1,10 @@
 import React from 'react';
-import ApolloClient, { gql } from 'apollo-boost';
+import ApolloClient from 'apollo-boost';
+import gql from 'graphql-tag';
 import { ApolloProvider } from '@apollo/react-hooks';
-import Query from "./components/Query";
+import ShowUsers from "./components/ShowUsers/ShowUsers";
+import CreateUser from "./components/CreateUser/CreateUser";
+import DeleteUser from "./components/DeleteUser/DeleteUser";
 
 const client = new ApolloClient({
   uri: 'http://localhost:5000/graphql'
@@ -21,7 +24,9 @@ client
 
 const Root = () => (
   <ApolloProvider client={client}>
-    <Query />
+    <ShowUsers />
+    <CreateUser />
+    <DeleteUser />
   </ApolloProvider>
 );
 

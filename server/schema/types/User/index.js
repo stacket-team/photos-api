@@ -14,7 +14,7 @@ const User = `
   type Mutation {
     createUser(user: CreateUserInput): User!
     updateUser(_id: String!, user: UpdateUserInput!): User!
-    deleteUser(_id: String!): User!
+    deleteUser(_id: String!): User
   }
 
   input CreateUserInput {
