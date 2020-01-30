@@ -6,13 +6,13 @@ const { transformPhoto } = require('../merge')
 module.exports = {
   Photo: {
     Query: {
-      photo: async (parent, { _id, title }, context, info) => {
-        return _id
-          ? await Photo.findOne({ _id }).exec()
-          : await Photo.findOne({ title }).exec()
+      photo: async (parent, { _id }, context, info) => {
+        return await Photo.findOne({ _id }).exec()
       },
-      photos: async (parent, args, context, info) => {
-        const photos = await Photo.find({})
+      photos: async (parent, { author }, context, info) => {
+        const search = {}
+        if (author) search.author = author
+        const photos = await Photo.find(search)
           .populate()
           .exec()
 
@@ -27,7 +27,8 @@ module.exports = {
       }
     },
     Mutation: {
-      createPhoto: async (parent, { photo }, context, info) => {
+      createPhoto: async (parent, { photo }, { user }, info) => {
+        if (!user) throw new Error('Not authorized')
         const photoData = {
           src: photo.src,
           title: photo.title || '',
@@ -58,18 +59,21 @@ module.exports = {
           throw error
         }
       },
-      updatePhoto: async (parent, { _id, photo }, context, info) => {
+      updatePhoto: async (parent, { _id, photo }, { user }, info) => {
+        if (!user || user._id !== photo.author || user.role !== 'admin') throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
-          Photo.findByIdAndUpdate(_id, { $set: { ...photo } }, { new: true }).exec(
+          Photo.findOneAndUpdate({ _id }, { $set: { ...photo } }, { new: true }).exec(
             (err, res) => {
               err ? reject(err) : resolve(res)
             }
           )
         })
       },
-      deletePhoto: async (parent, { _id }, context, info) => {
+      deletePhoto: async (parent, { _id }, { user }, info) => {
+        if (!user || user.role !== 'admin') throw new Error('Not authorized')
         try {
           const photo = await Photo.findById(_id)
+          if (user._id !== photo.author) throw new Error('Not authorized')
           const creator = await User.findById(photo.author)
           if (!creator) {
             throw new Error('User not found.')
@@ -80,12 +84,11 @@ module.exports = {
           }
           await creator.save()
           return new Promise((resolve, reject) => {
-            Photo.findByIdAndDelete(_id).exec((err, res) => {
+            Photo.findOneAndDelete({ _id }).exec((err, res) => {
               err ? reject(err) : resolve(res)
             })
           })
         } catch (error) {
-          console.log(error)
           throw error
         }
       }
