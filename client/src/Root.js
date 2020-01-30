@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
+import GlobalStyle from './theme/GlobalStyle';
 import LoginView from './views/LoginView';
 import AdminTemplate from "./templates/AdminTemplate";
 import ClientTemplate from "./templates/ClientTemplate";
@@ -22,6 +23,7 @@ const client = new ApolloClient({
 const Root = () => (
   <ApolloProvider client={client}>
     <UserContextProvider>
+      <GlobalStyle />
       <Router>
         <Switch>
           <Route path="/login" component={LoginView} />

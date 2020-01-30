@@ -68,21 +68,4 @@ export const useAuthorization = (condition) => {
   }, [user, condition, history]);
 };
 
-
-// export const withAuthorization = (condition) => Component => {
-//   class WithAuthorization extends React.Component {
-//
-//     componentDidMount() {
-//       if (!condition)
-//     }
-//
-//     render() {
-//       return (
-//         <Component {...this.props} />
-//       )
-//     }
-//   }
-// };
-
-
 export default UserContext;

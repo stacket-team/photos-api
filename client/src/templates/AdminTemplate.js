@@ -1,12 +1,16 @@
 import React from 'react';
 import { useAuthorization } from "../UserContext/UserContext";
+import ShowUsers from "../components/ShowUsers/ShowUsers";
+import LogoutButton from "../components/LogutButton/LogutButton";
 
 const AdminTemplate = () => {
-  const condition = user => user && user.role === 'admin';
-  useAuthorization(condition);
+  useAuthorization((user) => user && user.role === 'admin');
 
   return (
-    <h1>admin template</h1>
+    <>
+      <ShowUsers />
+      <LogoutButton />
+    </>
   )
 };
 

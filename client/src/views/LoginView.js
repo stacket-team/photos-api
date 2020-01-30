@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 import gql from 'graphql-tag';
 import {useMutation} from "@apollo/react-hooks";
 import UserContext from "../UserContext/UserContext";
@@ -13,6 +14,41 @@ const LOGIN = gql`
             }
         }
     }
+`;
+
+const StyledWrapper = styled.div`
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledButton = styled.button`
+  margin: 10px auto 0 auto;
+  padding: 12px 7px;
+  width: 200px;
+  font-family: inherit;
+  background: #ff8e3c;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  text-transform: uppercase;
+`;
+
+const StyledInput = styled.input` 
+  background: none;
+  font-family: inherit;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid #ff8e3c;
+  line-height: 2.2rem;
+  padding: 12px;
 `;
 
 const LoginView = () => {
@@ -45,11 +81,13 @@ const LoginView = () => {
   const handlePassChange = e => setPassword(e.target.value);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input onChange={handleNameChange} value={name} />
-      <input type="password" onChange={handlePassChange} value={password} />
-      <button type="submit">submit</button>
-    </form>
+    <StyledWrapper>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledInput name="name" onChange={handleNameChange} value={name} placeholder="name" />
+        <StyledInput name="password" type="password" onChange={handlePassChange} value={password} placeholder="password" />
+        <StyledButton type="submit">login</StyledButton>
+      </StyledForm>
+    </StyledWrapper>
   )
 };
 
