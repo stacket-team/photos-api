@@ -1,32 +1,35 @@
 import React from 'react';
+import {BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApolloClient from 'apollo-boost';
-import gql from 'graphql-tag';
 import { ApolloProvider } from '@apollo/react-hooks';
-import ShowUsers from "./components/ShowUsers/ShowUsers";
-import CreateUser from "./components/CreateUser/CreateUser";
-import DeleteUser from "./components/DeleteUser/DeleteUser";
+import LoginView from './views/LoginView';
+import AdminTemplate from "./templates/AdminTemplate";
+import ClientTemplate from "./templates/ClientTemplate";
+import { UserContextProvider } from "./UserContext/UserContext";
 
 const client = new ApolloClient({
-  uri: 'http://localhost:5000/graphql'
+  uri: '/graphql',
+  request: (operation) => {
+    const token = localStorage.getItem('token');
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : ''
+      }
+    })
+  }
 });
-
-client
-  .query({
-    query: gql`      
-        {
-            users {
-                _id
-            }
-        }
-    `
-  })
-  .then(res => console.log(res));
 
 const Root = () => (
   <ApolloProvider client={client}>
-    <ShowUsers />
-    <CreateUser />
-    <DeleteUser />
+    <UserContextProvider>
+      <Router>
+        <Switch>
+          <Route path="/login" component={LoginView} />
+          <Route path="/admin" component={AdminTemplate} />
+          <Route exact path="/" component={ClientTemplate} />
+        </Switch>
+      </Router>
+    </UserContextProvider>
   </ApolloProvider>
 );
 
