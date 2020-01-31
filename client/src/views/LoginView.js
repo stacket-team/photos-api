@@ -54,7 +54,7 @@ const StyledInput = styled.input`
 const LoginView = () => {
   const history = useHistory();
 
-  const [login, { data }] = useMutation(LOGIN);
+  const [login, { error, data }] = useMutation(LOGIN);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const { doUpdateToken } = useContext(UserContext);
@@ -74,7 +74,8 @@ const LoginView = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    login({ variables: { name, password }});
+    login({ variables: { name, password }})
+      .catch(e => console.log(e));
   };
 
   const handleNameChange = e => setName(e.target.value);
@@ -86,6 +87,7 @@ const LoginView = () => {
         <StyledInput name="name" onChange={handleNameChange} value={name} placeholder="name" />
         <StyledInput name="password" type="password" onChange={handlePassChange} value={password} placeholder="password" />
         <StyledButton type="submit">login</StyledButton>
+        {error && <p>{error.message}</p>}
       </StyledForm>
     </StyledWrapper>
   )
