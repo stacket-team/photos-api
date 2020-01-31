@@ -7,8 +7,7 @@ module.exports = {
   User: {
     Query: {
       currentUser: async (parent, args, { user }, info) => {
-        if (!user) throw new Error('Not authorized')
-        return await User.findOne({ _id: user._id }).exec()
+        return user ? await User.findOne({ _id: user._id }).exec() : user;
       },
       user: async (parent, { _id, name }, { user }, info) => {
         if (!user || ((_id ? user._id !== _id : user.name !== name) && user.role !== 'admin')) throw new Error('Not authorized')

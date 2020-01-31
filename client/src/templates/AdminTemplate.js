@@ -5,15 +5,15 @@ import CreateUser from "../components/CreateUser/CreateUser";
 import Header from "../components/Header/Header";
 
 const AdminTemplate = () => {
-  useAuthorization((user) => user && user.role === 'admin');
+  const { user } = useAuthorization((user) => user && user.role === 'admin');
 
-  return (
+  return user ? (
     <>
       <Header />
       <ShowUsers />
       <CreateUser />
     </>
-  )
+  ) : null;
 };
 
 export default AdminTemplate;

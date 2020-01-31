@@ -22,7 +22,7 @@ const LogoutButton = () => {
     <ApolloConsumer>
       {client => (
         <StyledButton onClick={() => {
-          client.clearStore();
+          client.resetStore();
           localStorage.removeItem('token');
           doUpdateToken();
         }}>logout</StyledButton>
