@@ -11,7 +11,7 @@ module.exports = {
         return await User.findOne({ _id: user._id }).exec()
       },
       user: async (parent, { _id, name }, { user }, info) => {
-        if (!user || (_id ? user._id !== _id : user.name !== name) || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || ((_id ? user._id !== _id : user.name !== name) && user.role !== 'admin')) throw new Error('Not authorized')
         return _id
           ? await User.findOne({ _id }).exec()
           : await User.findOne({ name, role: 'user' }).exec()
@@ -77,7 +77,7 @@ module.exports = {
         })
       },
       updateUser: async (parent, { _id, name, password }, { user }, info) => {
-        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         const $set = {}
         if (name) $set.name = name
         if (password) $set.password = await bcrypt.hash(password, 10)
@@ -90,7 +90,7 @@ module.exports = {
         })
       },
       deleteUser: async (parent, { _id }, { user }, info) => {
-        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           User.findOneAndDelete({ _id }).exec((err, res) => {
             err ? reject(err) : resolve(res)

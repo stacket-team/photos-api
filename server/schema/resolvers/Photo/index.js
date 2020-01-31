@@ -60,7 +60,7 @@ module.exports = {
         }
       },
       updatePhoto: async (parent, { _id, photo }, { user }, info) => {
-        if (!user || user._id !== photo.author || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || (user._id !== photo.author && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           Photo.findOneAndUpdate({ _id }, { $set: { ...photo } }, { new: true }).exec(
             (err, res) => {
