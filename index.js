@@ -6,6 +6,7 @@ const path = require("path")
 const http = require("http")
 const https = require("https")
 const jwt = require("jsonwebtoken")
+const fs = require("fs")
 
 const configurations = {
   production: { react: true, ssl: false, port: 80, hostname: "localhost", db: "mongodb://localhost:27017/photos-api" },
@@ -57,6 +58,9 @@ if (config.react) {
     res.sendFile(path.join(__dirname, "client/build/index.html"))
   })
 }
+
+if (!fs.existsSync('./uploaded')) fs.mkdirSync('./uploaded')
+app.use('/uploaded/', express.static(path.join(__dirname, "./uploaded")))
 
 let server
 if (config.ssl) {

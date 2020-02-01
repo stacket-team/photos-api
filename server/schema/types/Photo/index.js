@@ -1,4 +1,6 @@
 const Photo = `
+  scalar Upload
+
   type Photo {
     _id: String!
     src: String!
@@ -9,26 +11,24 @@ const Photo = `
   }
 
   type Query {
-    photo(_id: ID, author: ID): Photo
+    photo(_id: ID): Photo
     photos(author: ID): [Photo!]!
   }
 
   type Mutation {
-    createPhoto(photo: CreatePhotoInput!): Photo!
+    uploadPhoto(file: Upload!, photo: CreatePhotoInput!): Photo!
     updatePhoto(_id: String!, photo: UpdatePhotoInput!): Photo!
     deletePhoto(_id: String!): Photo
   }
-
+  
   input CreatePhotoInput {
-    src: String
     title: String
     description: String
     author: String!
     date: String
   }
-  
+
   input UpdatePhotoInput {
-    src: String
     title: String
     description: String
     author: String
