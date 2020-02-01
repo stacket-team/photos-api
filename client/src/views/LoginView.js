@@ -4,6 +4,7 @@ import styled from "styled-components";
 import gql from 'graphql-tag';
 import {useMutation} from "@apollo/react-hooks";
 import UserContext from "../UserContext/UserContext";
+import { toast } from 'react-toastify';
 
 const LOGIN = gql`
     mutation Login($name: String!, $password: String! ) {
@@ -81,13 +82,16 @@ const LoginView = () => {
   const handleNameChange = e => setName(e.target.value);
   const handlePassChange = e => setPassword(e.target.value);
 
+  useEffect(() => {
+    if (error && /Invalid Login/.test(error.message)) toast.error("Invalid login credentials");
+  }, [error]);
+
   return (
     <StyledWrapper>
       <StyledForm onSubmit={handleSubmit}>
         <StyledInput name="name" onChange={handleNameChange} value={name} placeholder="name" />
         <StyledInput name="password" type="password" onChange={handlePassChange} value={password} placeholder="password" />
         <StyledButton type="submit">login</StyledButton>
-        {error && <p>{error.message}</p>}
       </StyledForm>
     </StyledWrapper>
   )

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApolloClient, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { toast } from 'react-toastify';
 
 const SINGLE_UPLOAD_MUTATION = gql`
   mutation singleUpload($file: Upload!, $author: String!) {
@@ -21,10 +22,16 @@ export const UploadFile = ({ user }) => {
     }
   }) =>
     validity.valid &&
-    uploadFileMutation({ variables: { file, author: user._id } }).then(({ data }) => {
-      console.log(data.uploadPhoto.src);
-      apolloClient.resetStore()
-    });
+    uploadFileMutation({ variables: { file, author: user._id } })
+      .then(({ data }) => {
+        console.log(data.uploadPhoto.src);
+        toast.success('Uploaded photo');
+        apolloClient.resetStore()
+      })
+      .catch(e => {
+        toast.error('Couldn\'t upload photo');
+        console.error(e);
+      });
 
   return <input type="file" required onChange={onChange} />
 }
