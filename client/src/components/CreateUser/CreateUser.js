@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import gql from 'graphql-tag';
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 
 const CREATE_USER = gql`
     mutation User($name: String!, $password: String!) {
@@ -14,6 +14,7 @@ const CreateUser = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [createUser] = useMutation(CREATE_USER);
+  const apolloClient = useApolloClient();
 
   const handleNameChange = e => setName(e.target.value);
   const handlePasswordChange = e => setPassword(e.target.value);
@@ -21,6 +22,7 @@ const CreateUser = () => {
   const handleSubmit = e => {
     e.preventDefault();
     createUser({ variables: {name, password} })
+      .then(() => apolloClient.resetStore())
       .catch(e => console.log(e));
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 const FETCH_USERS = gql`
@@ -20,15 +20,16 @@ const DELETE_USER = gql`
 `;
 
 const ShowUsers = () => {
-  const { loading, error, data, refetch } = useQuery(FETCH_USERS);
+  const { loading, error, data } = useQuery(FETCH_USERS);
   const [ deleteUser ] = useMutation(DELETE_USER);
+  const apolloClient = useApolloClient();
 
   if (loading) return <p>Loading data...</p>;
   if (error) return <p>Error :c {error.message}</p>;
 
-  const handleDelete = (e) => {
+  const handleDelete = e => {
     deleteUser({variables: { id: e.target.name }})
-      .then(refetch)
+      .then(() => apolloClient.resetStore())
       .catch(error => console.error(error));
   };
 
