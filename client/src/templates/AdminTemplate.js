@@ -6,10 +6,9 @@ import Header from "../components/Header/Header";
 
 const AdminTemplate = () => {
   const { user } = useAuthorization((user) => user && user.role === 'admin');
-
   return user ? (
     <>
-      <Header />
+      <Header loggedAs={user.name} />
       <ShowUsers />
       <CreateUser />
     </>

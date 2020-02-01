@@ -7,12 +7,13 @@ const StyledWrapper = styled.div`
   height: 100px;
   padding: 10px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 `;
 
-const Header = () => (
+const Header = ({ loggedAs }) => (
   <StyledWrapper>
+    <p>logged as: {loggedAs}</p>
     <LogoutButton />
   </StyledWrapper>
 );
