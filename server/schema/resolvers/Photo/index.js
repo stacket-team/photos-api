@@ -63,7 +63,7 @@ module.exports = {
         }
       },
       updatePhoto: async (parent, { _id, photo }, { user }, info) => {
-        if (!user || (user._id !== photo.author && user.role !== 'admin')) throw new Error('Not authorized')
+        if (!user || (user._id !== photo.author.toString() && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           Photo.findOneAndUpdate({ _id }, { $set: { ...photo } }, { new: true }).exec(
             (err, res) => {
@@ -76,7 +76,7 @@ module.exports = {
         if (!user) throw new Error('Not authorized')
         try {
           const photo = await Photo.findById(_id)
-          if (user._id !== photo.author && user.role !== 'admin') throw new Error('Not authorized')
+          if (user._id !== photo.author.toString() && user.role !== 'admin') throw new Error('Not authorized')
           const creator = await User.findById(photo.author)
           if (!creator) {
             throw new Error('User not found.')
