@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
+import { toast } from 'react-toastify';
 
 const CREATE_USER = gql`
     mutation User($name: String!, $password: String!) {
@@ -22,8 +23,14 @@ const CreateUser = () => {
   const handleSubmit = e => {
     e.preventDefault();
     createUser({ variables: {name, password} })
-      .then(() => apolloClient.resetStore())
-      .catch(e => console.log(e));
+      .then(() => {
+        toast.success(`Created ${name}`);
+        apolloClient.resetStore();
+      })
+      .catch(e => {
+        toast.error(`Couldn't create ${name}`);
+        console.log(e)
+      });
   };
 
   return (

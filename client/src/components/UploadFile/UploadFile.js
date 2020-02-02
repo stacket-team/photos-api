@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useDropzone } from 'react-dropzone';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { toast } from 'react-toastify';
 
 const SINGLE_UPLOAD_MUTATION = gql`
   mutation singleUpload($title: String, $description: String, $file: Upload!, $author: String!) {
@@ -45,8 +46,14 @@ const UploadFile = ({ user }) => {
     e.preventDefault();
     const [file] = uploadedFile.current;
     uploadFileMutation({ variables: { file, author: user._id, title, description } })
-      .then(() => apolloClient.resetStore())
-      .catch(error => console.error(error));
+      .then(() => {
+        toast.success('image uploaded');
+        apolloClient.resetStore();
+      })
+      .catch(error => {
+        toast.error("couldn't upload photo");
+        console.error(error)
+      });
   };
 
   return (
@@ -55,9 +62,9 @@ const UploadFile = ({ user }) => {
       <input placeholder="opis" onChange={handleDescriptionChange} />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        <p>drag and drop files here</p>
+        <p>drag and drop image here</p>
       </StyledInnerWrapper>
-      <button type="submit">prześlij zdjęcie</button>
+      <button type="submit">upload photo</button>
     </form>
     );
 };

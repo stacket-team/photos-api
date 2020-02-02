@@ -5,6 +5,8 @@ import LoginView from './views/LoginView';
 import AdminTemplate from "./templates/AdminTemplate";
 import ClientTemplate from "./templates/ClientTemplate";
 import { UserContextProvider } from "./UserContext/UserContext";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css'; 
 
 const Root = () => (
   <UserContextProvider>
@@ -16,6 +18,7 @@ const Root = () => (
         <Route exact path="/" component={ClientTemplate} />
       </Switch>
     </Router>
+    <ToastContainer />
   </UserContextProvider>
 );
 

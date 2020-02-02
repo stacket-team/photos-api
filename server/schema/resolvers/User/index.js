@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { models } = require('../../../models')
 const { User, Photo } = models
+const fs = require('fs')
 
 module.exports = {
   User: {
@@ -92,7 +93,23 @@ module.exports = {
         if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           User.findOneAndDelete({ _id }).exec((err, res) => {
-            err ? reject(err) : resolve(res)
+            if (err) { 
+              reject(err) 
+            } else {
+              Photo.find({ author: _id })
+                .then(photos => {
+                  for (let photo of photos) {
+                    Photo.findOneAndDelete({ _id: photo._id }).exec()
+                    fs.unlinkSync('.'+photo.src)
+                  }
+                })
+                .catch((e) => {
+                  console.log(e)
+                })
+                .finally(() => {
+                  resolve(res)
+                })
+            }
           })
         })
       }

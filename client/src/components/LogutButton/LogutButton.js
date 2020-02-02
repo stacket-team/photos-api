@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import { ApolloConsumer } from "@apollo/react-hooks";
 import styled from 'styled-components';
 import UserContext from "../../UserContext/UserContext";
+import { toast } from 'react-toastify';
 
 const StyledButton = styled.button`
   padding: 12px 7px;
@@ -22,9 +23,10 @@ const LogoutButton = () => {
     <ApolloConsumer>
       {client => (
         <StyledButton onClick={() => {
-          client.resetStore();
           localStorage.removeItem('token');
           doUpdateToken();
+          toast.warn('Logged out');
+          client.resetStore();
         }}>logout</StyledButton>
       )}
     </ApolloConsumer>
