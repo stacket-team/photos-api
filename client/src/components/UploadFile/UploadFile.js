@@ -31,11 +31,14 @@ const UploadFile = ({ user }) => {
   const [description, setDescription] = useState();
   const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION);
   const apolloClient = useApolloClient();
-  const uploadedFile = useRef([]);
+  const uploadedFile = useRef(null);
+  const [fileData, setFileData ] = useState(null);
 
-  const onDrop = useCallback(acceptedFiles => {
-    uploadedFile.current = acceptedFiles;
-    console.log(uploadedFile.current);
+  const onDrop = useCallback(( [ file ] ) => {
+    uploadedFile.current = file;
+    const reader = new FileReader();
+    reader.onload = e => setFileData(e.target.result);
+    reader.readAsDataURL(uploadedFile.current);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -44,15 +47,14 @@ const UploadFile = ({ user }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const [file] = uploadedFile.current;
-    uploadFileMutation({ variables: { file, author: user._id, title, description } })
+    uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description } })
       .then(() => {
         toast.success('image uploaded');
         apolloClient.resetStore();
       })
       .catch(error => {
         toast.error("couldn't upload photo");
-        console.error(error)
+        console.error(error);
       });
   };
 
@@ -62,7 +64,7 @@ const UploadFile = ({ user }) => {
       <input placeholder="opis" onChange={handleDescriptionChange} />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        <p>drag and drop image here</p>
+        { fileData ? <img src={fileData} alt="your file" /> : <p>drag and drop image here</p> }
       </StyledInnerWrapper>
       <button type="submit">upload photo</button>
     </form>
