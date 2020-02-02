@@ -75,7 +75,7 @@ const LoginView = () => {
   const handleSubmit = e => {
     e.preventDefault();
     login({ variables: { name, password }})
-      .catch(e => console.log(e));
+      .catch(error => console.error(error));
   };
 
   const handleNameChange = e => setName(e.target.value);
