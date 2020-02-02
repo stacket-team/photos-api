@@ -19,7 +19,7 @@ const StyledInnerWrapper = styled.div`
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  width: 300px;
+  width: 320px;
   
   label {
     margin-right: 10px;
@@ -29,10 +29,10 @@ const StyledInnerWrapper = styled.div`
 const UploadFile = ({ user }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState();
+  const [fileData, setFileData ] = useState(null);
+  const uploadedFile = useRef(null);
   const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION);
   const apolloClient = useApolloClient();
-  const uploadedFile = useRef(null);
-  const [fileData, setFileData ] = useState(null);
 
   const onDrop = useCallback(( [ file ] ) => {
     uploadedFile.current = file;

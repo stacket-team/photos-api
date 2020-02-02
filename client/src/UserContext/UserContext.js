@@ -9,6 +9,12 @@ const CURRENT_USER = gql`
             _id
             name
             role
+            photos {
+                _id
+                title
+                description
+                src
+            }
         }
     }
 `;
@@ -20,13 +26,13 @@ export const UserContextProvider = ({ children }) => {
   const { data, refetch } = useQuery(CURRENT_USER);
 
   const doUpdateToken = () => setUser(undefined);
-  
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) setUser(null);
     if (user === undefined) refetch();
   }, [user, refetch]);
-  
+
   useEffect(() => {
     if (data) setUser(data.currentUser);
   }, [data]);
