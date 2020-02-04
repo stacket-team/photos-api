@@ -5,7 +5,7 @@ import LogoutButton from "../LogutButton/LogutButton";
 const StyledWrapper = styled.div`
   width: 100%;
   height: 100px;
-  padding: 10px;
+  padding: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
