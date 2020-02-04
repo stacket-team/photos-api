@@ -16,9 +16,11 @@ module.exports = {
           ? await User.findOne({ _id }).exec()
           : await User.findOne({ name, role: 'user' }).exec()
       },
-      users: async (parent, args, { user }, info) => {
+      users: async (parent, { name }, { user }, info) => {
         if (!user || user.role !== 'admin') throw new Error('Not authorized')
-        const users = await User.find({ role: 'user' })
+        const query = { role: 'user' }
+        if (name) query.name = new RegExp(name, 'i')
+        const users = await User.find(query)
           .populate()
           .exec()
 

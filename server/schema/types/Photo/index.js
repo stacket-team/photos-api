@@ -12,7 +12,7 @@ const Photo = `
 
   type Query {
     photo(_id: ID): Photo
-    photos(author: ID): [Photo!]!
+    photos(author: ID, title: String): [Photo!]!
   }
 
   type Mutation {

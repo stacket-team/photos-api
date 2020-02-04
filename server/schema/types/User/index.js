@@ -10,7 +10,7 @@ const User = `
   type Query {
     currentUser: User
     user(_id: ID, name: String): User
-    users: [User!]!
+    users(name: String): [User!]!
   }
 
   type Mutation {

@@ -9,10 +9,11 @@ module.exports = {
       photo: async (parent, { _id }, context, info) => {
         return await Photo.findOne({ _id }).exec()
       },
-      photos: async (parent, { author }, context, info) => {
-        const search = {}
-        if (author) search.author = author
-        const photos = await Photo.find(search)
+      photos: async (parent, { author, title }, context, info) => {
+        const query = {}
+        if (author) query.author = author
+        if (title) query.title = new RegExp(title, 'i');
+        const photos = await Photo.find(query)
           .populate()
           .exec()
 
