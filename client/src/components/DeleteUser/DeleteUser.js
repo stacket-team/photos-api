@@ -2,6 +2,7 @@ import React from 'react';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { toast } from 'react-toastify';
+import Button from "../Button/Button";
 
 const DELETE_USER = gql`
     mutation deleteUser($id: String!) {
@@ -27,7 +28,7 @@ const DeleteUser = ({ id, name }) => {
       });
   };
 
-  return <button onClick={handleDelete}>delete button</button>;
-}
+  return <Button onClick={handleDelete} big>delete button</Button>;
+};
 
 export default DeleteUser;

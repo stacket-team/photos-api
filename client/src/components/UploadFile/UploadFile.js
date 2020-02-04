@@ -4,6 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { toast } from 'react-toastify';
+import Button from "../Button/Button";
 
 const SINGLE_UPLOAD_MUTATION = gql`
   mutation singleUpload($title: String, $description: String, $file: Upload!, $author: String!) {
@@ -18,12 +19,81 @@ const StyledInnerWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid black;
+  border: 2px solid ${({ theme }) => theme.color.red};
   width: 320px;
+  margin: 0 auto;
+  font-size: 22px;
+  padding: 5px;
   
   label {
     margin-right: 10px;
   }
+`;
+
+const StyledForm = styled.form`
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.color.white};
+  padding: 30px;
+  border-radius: 8px;
+  -webkit-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  -moz-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  box-shadow: 7px 7px 18px -8px rgba(0,0,0,1); 
+`;
+
+const StyledLabel = styled.label`
+  color: ${({ theme }) => theme.color.primary};
+  position: absolute;
+  top: 3px;
+  left: 0;
+  transition: 0.2s ease-in-out;
+  font-size: 24px;
+`;
+
+const StyledInput = styled.input` 
+  color: ${({ theme }) => theme.color.primary};
+  font-size: 24px;
+  border: none;
+  line-height: 22px;
+  height: 100%;
+  background: none;
+  
+  &:focus {
+    outline: none;
+  }
+  
+  &:focus + label {
+    top: -22px;
+    font-size: 18px;
+  }
+  
+  &:not(:placeholder-shown) + label {
+    top: -22px;
+    font-size: 18px;
+  }
+`;
+
+const StyledFormItem = styled.div`
+  width: 100%;
+  margin: 24px 0;
+  position: relative;
+  flex-shrink: 0;
+`;
+
+const StyledBar = styled.div`
+  width: 100%;
+  height: 2px;
+  background: ${({ theme }) => theme.color.red};
+  transition: all 0.1s;
+`;
+
+const StyledUploadText = styled.p`
+  color: ${({ theme }) => theme.color.primary};
+`;
+
+const StyledButton = styled(Button)`
+  margin: 30px auto 0;
 `;
 
 const UploadFile = ({ user }) => {
@@ -59,15 +129,23 @@ const UploadFile = ({ user }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input placeholder="tytuł" onChange={handleTitleChange} />
-      <input placeholder="opis" onChange={handleDescriptionChange} />
+    <StyledForm onSubmit={handleSubmit}>
+      <StyledFormItem>
+        <StyledInput name="title" id="title" placeholder=" " onChange={handleTitleChange} />
+        <StyledLabel htmlFor="title">title</StyledLabel>
+        <StyledBar />
+      </StyledFormItem>
+      <StyledFormItem>
+        <StyledInput name="description" id="description" placeholder=" " onChange={handleDescriptionChange} />
+        <StyledLabel htmlFor="description">description</StyledLabel>
+        <StyledBar />
+      </StyledFormItem>
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        { fileData ? <img src={fileData} alt="your file" /> : <p>drag and drop image here</p> }
+        { fileData ? <img src={fileData} alt="your file" /> : <StyledUploadText>drag and drop image here</StyledUploadText> }
       </StyledInnerWrapper>
-      <button type="submit">upload photo</button>
-    </form>
+      <StyledButton type="submit" big>upload photo</StyledButton>
+    </StyledForm>
     );
 };
 

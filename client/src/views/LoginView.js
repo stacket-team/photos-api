@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import {useMutation} from "@apollo/react-hooks";
 import UserContext from "../UserContext/UserContext";
 import { toast } from 'react-toastify';
+import Button from '../components/Button/Button';
 
 const LOGIN = gql`
     mutation Login($name: String!, $password: String! ) {
@@ -28,28 +29,62 @@ const StyledWrapper = styled.div`
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  background: ${({ theme }) => theme.color.white};
+  padding: 30px;
+  border-radius: 8px;
+  -webkit-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  -moz-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  box-shadow: 7px 7px 18px -8px rgba(0,0,0,1); 
 `;
 
-const StyledButton = styled.button`
-  margin: 10px auto 0 auto;
-  padding: 12px 7px;
-  width: 200px;
-  font-family: inherit;
-  background: #ff8e3c;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  text-transform: uppercase;
+const StyledButton = styled(Button)`
+  margin: 35px auto 0 auto;
+`;
+
+const StyledFormItem = styled.div`
+  width: 100%;
+  margin: 24px 0;
+  position: relative;
+  flex-shrink: 0;
+`;
+
+const StyledBar = styled.div`
+  width: 100%;
+  height: 2px;
+  background: ${({ theme }) => theme.color.red};
+  transition: all 0.1s;
+`;
+
+const StyledLabel = styled.label`
+  color: ${({ theme }) => theme.color.primary};
+  position: absolute;
+  top: 3px;
+  left: 0;
+  transition: 0.2s ease-in-out;
+  font-size: 24px;
 `;
 
 const StyledInput = styled.input` 
-  background: none;
-  font-family: inherit;
-  font-size: 16px;
+  color: ${({ theme }) => theme.color.primary};
+  font-size: 24px;
   border: none;
-  border-bottom: 1px solid #ff8e3c;
-  line-height: 2.2rem;
-  padding: 12px;
+  line-height: 22px;
+  height: 100%;
+  background: none;
+  
+  &:focus {
+    outline: none;
+  }
+  
+  &:focus + label {
+    top: -22px;
+    font-size: 18px;
+  }
+  
+  &:not(:placeholder-shown) + label {
+    top: -22px;
+    font-size: 18px;
+  }
 `;
 
 const LoginView = () => {
@@ -80,18 +115,26 @@ const LoginView = () => {
   };
 
   const handleNameChange = e => setName(e.target.value);
-  const handlePassChange = e => setPassword(e.target.value);
+  const handlePasswordName = e => setPassword(e.target.value);
 
   useEffect(() => {
-    if (error && /Invalid Login/.test(error.message)) toast.error("Invalid login credentials");
+    if (error && /Invalid Login/.test(error.message)) toast.error("invalid login credentials");
   }, [error]);
 
   return (
     <StyledWrapper>
       <StyledForm onSubmit={handleSubmit}>
-        <StyledInput name="name" onChange={handleNameChange} value={name} placeholder="name" />
-        <StyledInput name="password" type="password" onChange={handlePassChange} value={password} placeholder="password" />
-        <StyledButton type="submit">login</StyledButton>
+        <StyledFormItem>
+          <StyledInput name="name" id="name" type="text" placeholder=" " required onChange={handleNameChange} />
+          <StyledLabel htmlFor="name">username</StyledLabel>
+          <StyledBar />
+        </StyledFormItem>
+        <StyledFormItem>
+          <StyledInput name="password" id="password" type="password" placeholder=" " required onChange={handlePasswordName} />
+          <StyledLabel htmlFor="password">password</StyledLabel>
+          <StyledBar />
+        </StyledFormItem>
+        <StyledButton>login</StyledButton>
       </StyledForm>
     </StyledWrapper>
   )

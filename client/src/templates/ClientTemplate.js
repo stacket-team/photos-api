@@ -2,7 +2,7 @@ import React from 'react';
 import {useAuthorization} from "../UserContext/UserContext";
 import Header from "../components/Header/Header";
 import UploadFile from '../components/UploadFile/UploadFile';
-import ShowPhotos from "../ShowPhotos/ShowPhotos";
+import ShowPhotos from "../components/ShowPhotos/ShowPhotos";
 
 const ClientTemplate = () => {
   const { user } = useAuthorization((user) => user);
@@ -10,8 +10,8 @@ const ClientTemplate = () => {
   return user ? (
     <>
       <Header loggedAs={user.name} />
-      <ShowPhotos />
       <UploadFile user={user} />
+      <ShowPhotos />
     </>
   ) : null;
 };

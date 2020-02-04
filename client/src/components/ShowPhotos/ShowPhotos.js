@@ -1,6 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import {useAuthorization} from "../UserContext/UserContext";
+import {useAuthorization} from "../../UserContext/UserContext";
+import DeletePhoto from "../DeletePhoto/DeletePhoto";
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const ShowPhotos = () => {
   const { user } = useAuthorization(user => user);
@@ -8,11 +14,12 @@ const ShowPhotos = () => {
   return user ? (
     <>
       {user.photos.map(({ _id, title, description, src }) => (
-        <div key={_id}>
+        <StyledWrapper key={_id}>
           <p>{title}</p>
           <p>{description}</p>
           <img src={src} width="250px" height="250px" alt={title} />
-        </div>
+          <DeletePhoto id={_id} />
+        </StyledWrapper>
       ))}
     </>
   ) : null

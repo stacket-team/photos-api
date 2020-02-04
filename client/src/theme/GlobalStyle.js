@@ -6,7 +6,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: #fffffe;
+    background: ${({ theme }) => theme.color.primary};
+    color: ${({ theme }) => theme.color.white};
     font-family: Montserrat, sans-serif;
     font-size: 24px;
   }

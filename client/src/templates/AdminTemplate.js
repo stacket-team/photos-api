@@ -9,8 +9,8 @@ const AdminTemplate = () => {
   return user ? (
     <>
       <Header loggedAs={user.name} />
-      <ShowUsers />
       <CreateUser />
+      <ShowUsers />
     </>
   ) : null;
 };
