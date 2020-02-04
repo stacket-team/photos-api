@@ -11,9 +11,10 @@ const StyledWrapper = styled.div`
   align-items: center;
 `;
 
-const Header = ({ loggedAs }) => (
+const Header = ({ loggedAs, children }) => (
   <StyledWrapper>
     <p>logged as: {loggedAs}</p>
+    { children }
     <LogoutButton />
   </StyledWrapper>
 );

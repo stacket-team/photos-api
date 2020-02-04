@@ -10,6 +10,7 @@ const StyledButton = styled.button`
   border: none;
   border-radius: 20px;
   font-size: 18px;
+  cursor: pointer;
 `;
 
 const Button = ({ children, className, big, onClick }) => (

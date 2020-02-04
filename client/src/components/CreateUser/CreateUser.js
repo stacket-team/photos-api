@@ -46,6 +46,7 @@ const StyledLabel = styled.label`
   left: 0;
   transition: 0.2s ease-in-out;
   font-size: 24px;
+  pointer-events: none;
 `;
 
 const StyledInput = styled.input` 
@@ -55,6 +56,7 @@ const StyledInput = styled.input`
   line-height: 22px;
   height: 100%;
   background: none;
+  width: 100%;
   
   &:focus {
     outline: none;
