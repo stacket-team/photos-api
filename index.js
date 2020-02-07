@@ -50,6 +50,10 @@ const apollo = new ApolloServer({
 })
 
 const app = express()
+
+if (!fs.existsSync('./uploaded')) fs.mkdirSync('./uploaded')
+app.use('/uploaded/', express.static(path.join(__dirname, "./uploaded")))
+
 apollo.applyMiddleware({ app })
 
 if (config.react) {
@@ -58,9 +62,6 @@ if (config.react) {
     res.sendFile(path.join(__dirname, "client/build/index.html"))
   })
 }
-
-if (!fs.existsSync('./uploaded')) fs.mkdirSync('./uploaded')
-app.use('/uploaded/', express.static(path.join(__dirname, "./uploaded")))
 
 let server
 if (config.ssl) {
