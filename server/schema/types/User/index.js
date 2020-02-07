@@ -5,6 +5,7 @@ const User = `
     password: String!
     role: String!
     photos: [Photo!]!
+    domain: String!
   }
 
   type Query {
@@ -15,8 +16,8 @@ const User = `
 
   type Mutation {
     login(name: String!, password: String!): LoginResponse!
-    createUser(name: String!, password: String!): User!
-    updateUser(_id: String!, name: String, password: String): User!
+    createUser(name: String!, password: String!, domain: String!): User!
+    updateUser(_id: String!, name: String, password: String, domain: String): User!
     deleteUser(_id: String!): User
   }
 

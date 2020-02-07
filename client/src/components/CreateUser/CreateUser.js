@@ -6,8 +6,8 @@ import Button from "../Button/Button";
 import styled from "styled-components";
 
 const CREATE_USER = gql`
-    mutation User($name: String!, $password: String!) {
-        createUser(name: $name, password: $password) {
+    mutation User($name: String!, $password: String!, $domain: String!) {
+        createUser(name: $name, password: $password, domain: $domain) {
             _id
         }
     }
@@ -80,15 +80,17 @@ const StyledButton = styled(Button)`
 const CreateUser = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [domain, setDomain] = useState('');
   const [createUser] = useMutation(CREATE_USER);
   const apolloClient = useApolloClient();
 
   const handleNameChange = e => setName(e.target.value);
   const handlePasswordChange = e => setPassword(e.target.value);
+  const handleDomainChange = e => setDomain(e.target.value);
 
   const handleSubmit = e => {
     e.preventDefault();
-    createUser({ variables: {name, password} })
+    createUser({ variables: {name, password, domain} })
       .then(() => {
         toast.success(`Created ${name}`);
         apolloClient.resetStore();
@@ -109,6 +111,11 @@ const CreateUser = () => {
       <StyledFormItem>
         <StyledInput id="password" name="password" placeholder=" " type="password" onChange={handlePasswordChange} />
         <StyledLabel htmlFor="password">password</StyledLabel>
+        <StyledBar />
+      </StyledFormItem>
+      <StyledFormItem>
+        <StyledInput id="domain" name="domain" placeholder=" " type="text" onChange={handleDomainChange} />
+        <StyledLabel htmlFor="domain">domain</StyledLabel>
         <StyledBar />
       </StyledFormItem>
       <StyledButton type="submit" big>create user</StyledButton>

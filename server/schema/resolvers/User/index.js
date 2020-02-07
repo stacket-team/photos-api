@@ -29,7 +29,8 @@ module.exports = {
           name: u.name,
           password: u.password,
           role: u.role,
-          photos: u.photos
+          photos: u.photos,
+          domain: u.domain
         }))
       }
     },
@@ -64,12 +65,13 @@ module.exports = {
           user,
         }
       },
-      createUser: async (parent, { name, password }, { user }, info) => {
+      createUser: async (parent, { name, password, domain }, { user }, info) => {
         if (!user || user.role !== 'admin') throw new Error('Not authorized')
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = await new User({
           name,
-          password: hashedPassword
+          password: hashedPassword,
+          domain
         })
 
         return new Promise((resolve, reject) => {
@@ -78,11 +80,12 @@ module.exports = {
           })
         })
       },
-      updateUser: async (parent, { _id, name, password }, { user }, info) => {
+      updateUser: async (parent, { _id, name, password, domain }, { user }, info) => {
         if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         const $set = {}
         if (name) $set.name = name
         if (password) $set.password = await bcrypt.hash(password, 10)
+        if (domain) $set.domain = domain
         return new Promise((resolve, reject) => {
           User.findOneAndUpdate({ _id }, { $set }, { new: true }).exec( 
             (err, res) => {
