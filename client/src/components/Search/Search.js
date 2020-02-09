@@ -48,6 +48,6 @@ export const useSearch = ( query, additionalVariables ) => {
     error,
     data,
   }
-}
+};
 
 export default Search;

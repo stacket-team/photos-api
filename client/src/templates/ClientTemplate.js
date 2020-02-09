@@ -24,11 +24,11 @@ const ClientTemplate = () => {
 
   return user ? (
     <>
-      <Header loggedAs={ user.name }>
-        <Search { ...searchProps } placeholder="search photo" />
-        <Modal component={ UploadFile } props={{ user }}>upload photo</Modal>
+      <Header loggedAs={user.name}>
+        <Search {...searchProps} placeholder="search photo" />
+        <Modal component={ UploadFile } props={{user}} big>upload photo</Modal>
       </Header>
-      { !loading && data ? <ShowPhotos { ...data } /> : null }
+      {!loading && data ? <ShowPhotos {...data} /> : null}
     </>
   ) : null;
 };

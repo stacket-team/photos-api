@@ -22,11 +22,11 @@ const AdminTemplate = () => {
 
   return user ? (
     <>
-      <Header loggedAs={ user.name }>
-        <Search { ...searchProps } placeholder="search user" />
-        <Modal component={ CreateUser }>add user</Modal>
+      <Header loggedAs={user.name}>
+        <Search {...searchProps} placeholder="search user" />
+        <Modal component={CreateUser}>create user</Modal>
       </Header>
-      { data ? <ShowUsers { ...data } /> : null }
+      {data ? <ShowUsers {...data} /> : null}
     </>
   ) : null;
 };

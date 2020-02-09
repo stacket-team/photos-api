@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   margin: 50px;
 `;
 
-const Card = styled.div`
+const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,32 +26,45 @@ const Card = styled.div`
   }
 `;
 
-const Title = styled.div`
+const StyledTitle = styled.div`
   font-weight: 600;
 `;
 
-const Photo = styled.img`
+const StyledPhoto = styled.img`
   max-width: 350px;
 `;
 
-const Empty = styled.div`
+const StyledEmpty = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 100px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
 
-const ShowPhotos = ({ photos }) => photos.length > 0 ? 
-<Wrapper>
-  {photos.map(({ _id, title, description, src }) => (
-  <Card key={_id}>
-    <Title>{title}</Title>
-    <p>{description}</p>
-    <Photo src={src} alt={title} />
-    <DeletePhoto id={_id} />
-  </Card>
-  ))}
-</Wrapper> : <Empty>couldn't find any photos</Empty>
+const ShowPhotos = ({ photos }) => photos.length > 0 ?
+  <Wrapper>
+    {photos.map(({ _id, title, description, src }) => (
+      <StyledCard key={_id}>
+        <StyledTitle>{title}</StyledTitle>
+        <p>{description}</p>
+        <StyledPhoto src={src} alt={title} />
+        <DeletePhoto id={_id} />
+      </StyledCard>
+    ))}
+  </Wrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
+
+// const ShowPhotos = ({ photos }) => photos.length > 0 ?
+// <Wrapper>
+//   {photos.map(({ _id, title, description, src }) => (
+//   <Card key={_id}>
+//     <Title>{title}</Title>
+//     <p>{description}</p>
+//     <Photo src={src} alt={title} />
+//     <DeletePhoto id={_id} />
+//   </Card>
+//   ))}
+// </Wrapper> : <Empty>couldn't find any photos</Empty>
 
 export default ShowPhotos;
