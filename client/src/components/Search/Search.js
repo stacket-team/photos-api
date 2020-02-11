@@ -28,6 +28,10 @@ const StyledInput = styled.input`
   &:focus {
     outline: none;
   }
+  
+  &::placeholder {
+    color: ${({ theme }) => theme.color.white};
+  }
 `;
 
 const Search = props => (

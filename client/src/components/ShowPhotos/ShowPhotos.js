@@ -17,9 +17,12 @@ const StyledCard = styled.div`
   align-self: center;
   justify-self: center;
   background-color: white;
-  color: ${ ({ theme: { color: { primary } } }) => primary };
+  color: ${({ theme }) => theme.color.primary};
   padding: 18px;
   border-radius: 8px;
+  -webkit-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  -moz-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
+  box-shadow: 7px 7px 18px -8px rgba(0,0,0,1); 
 
   button {
     margin: 24px 0 0 0;
@@ -54,17 +57,5 @@ const ShowPhotos = ({ photos }) => photos.length > 0 ?
       </StyledCard>
     ))}
   </Wrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
-
-// const ShowPhotos = ({ photos }) => photos.length > 0 ?
-// <Wrapper>
-//   {photos.map(({ _id, title, description, src }) => (
-//   <Card key={_id}>
-//     <Title>{title}</Title>
-//     <p>{description}</p>
-//     <Photo src={src} alt={title} />
-//     <DeletePhoto id={_id} />
-//   </Card>
-//   ))}
-// </Wrapper> : <Empty>couldn't find any photos</Empty>
 
 export default ShowPhotos;
