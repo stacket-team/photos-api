@@ -26,7 +26,7 @@ const ClientTemplate = () => {
     <>
       <Header loggedAs={user.name}>
         <Search {...searchProps} placeholder="search photo" />
-        <Modal component={ UploadFile } props={{user}} big>upload photo</Modal>
+        <Modal component={UploadFile} props={{user}} big>upload photo</Modal>
       </Header>
       {!loading && data ? <ShowPhotos {...data} /> : null}
     </>

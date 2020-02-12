@@ -44,6 +44,7 @@ const Search = props => (
 export const useSearch = ( query, additionalVariables ) => {
   const [value, setValue] = useState('');
   const { loading, error, data } = useQuery(query, { variables: { value, ...additionalVariables } });
+
   const handleValue = ({ target: { value } }) => setValue(value);
 
   return {

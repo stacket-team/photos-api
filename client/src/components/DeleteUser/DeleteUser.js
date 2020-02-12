@@ -28,7 +28,7 @@ const DeleteUser = ({ id, name }) => {
       });
   };
 
-  return <Button onClick={handleDelete} big>delete button</Button>;
+  return <Button onClick={handleDelete} big>delete user</Button>;
 };
 
 export default DeleteUser;

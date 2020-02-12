@@ -5,6 +5,8 @@ import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { toast } from 'react-toastify';
 import Button from "../Button/Button";
+import Form from '../Form/Form';
+import FormItem from "../Form/FormItem";
 
 const SINGLE_UPLOAD_MUTATION = gql`
   mutation singleUpload($title: String, $description: String, $file: Upload!, $author: String!) {
@@ -30,64 +32,6 @@ const StyledInnerWrapper = styled.div`
   }
 `;
 
-const StyledForm = styled.form`
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  background: ${({ theme }) => theme.color.white};
-  padding: 30px;
-  border-radius: 8px;
-  -webkit-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
-  -moz-box-shadow: 7px 7px 18px -8px rgba(0,0,0,1);
-  box-shadow: 7px 7px 18px -8px rgba(0,0,0,1); 
-`;
-
-const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.color.primary};
-  position: absolute;
-  top: 3px;
-  left: 0;
-  transition: 0.2s ease-in-out;
-  font-size: 24px;
-`;
-
-const StyledInput = styled.input` 
-  color: ${({ theme }) => theme.color.primary};
-  font-size: 24px;
-  border: none;
-  line-height: 22px;
-  height: 100%;
-  background: none;
-  
-  &:focus {
-    outline: none;
-  }
-  
-  &:focus + label {
-    top: -22px;
-    font-size: 18px;
-  }
-  
-  &:not(:placeholder-shown) + label {
-    top: -22px;
-    font-size: 18px;
-  }
-`;
-
-const StyledFormItem = styled.div`
-  width: 100%;
-  margin: 24px 0;
-  position: relative;
-  flex-shrink: 0;
-`;
-
-const StyledBar = styled.div`
-  width: 100%;
-  height: 2px;
-  background: ${({ theme }) => theme.color.red};
-  transition: all 0.1s;
-`;
-
 const StyledUploadText = styled.p`
   color: ${({ theme }) => theme.color.primary};
 `;
@@ -96,7 +40,7 @@ const StyledButton = styled(Button)`
   margin: 30px auto 0;
 `;
 
-const UploadFile = ({ user }) => {
+const UploadFile = ({ user, closeModal }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState();
   const [fileData, setFileData ] = useState(null);
@@ -120,6 +64,7 @@ const UploadFile = ({ user }) => {
     uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description } })
       .then(() => {
         toast.success('image uploaded');
+        closeModal();
         apolloClient.resetStore();
       })
       .catch(error => {
@@ -129,23 +74,15 @@ const UploadFile = ({ user }) => {
   };
 
   return (
-    <StyledForm onSubmit={handleSubmit}>
-      <StyledFormItem>
-        <StyledInput name="title" id="title" placeholder=" " onChange={handleTitleChange} />
-        <StyledLabel htmlFor="title">title</StyledLabel>
-        <StyledBar />
-      </StyledFormItem>
-      <StyledFormItem>
-        <StyledInput name="description" id="description" placeholder=" " onChange={handleDescriptionChange} />
-        <StyledLabel htmlFor="description">description</StyledLabel>
-        <StyledBar />
-      </StyledFormItem>
+    <Form onSubmit={handleSubmit} big>
+      <FormItem name="title" id="title" onChange={handleTitleChange} content="title" htmlFor="title" />
+      <FormItem name="description" id="description" onChange={handleDescriptionChange} content="description" htmlFor="description" />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        { fileData ? <img src={fileData} alt="your file" /> : <StyledUploadText>drag and drop image here</StyledUploadText> }
-      </StyledInnerWrapper>
+        { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText>}
+        </StyledInnerWrapper>
       <StyledButton type="submit" big>upload photo</StyledButton>
-    </StyledForm>
+    </Form>
     );
 };
 

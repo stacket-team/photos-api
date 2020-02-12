@@ -13,7 +13,7 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
+  width: 430px;
   align-self: center;
   justify-self: center;
   background-color: white;
@@ -34,7 +34,8 @@ const StyledTitle = styled.div`
 `;
 
 const StyledPhoto = styled.img`
-  max-width: 350px;
+  max-width: 400px;
+  max-height: 200px;
 `;
 
 const StyledEmpty = styled.div`
@@ -52,7 +53,7 @@ const ShowPhotos = ({ photos }) => photos.length > 0 ?
       <StyledCard key={_id}>
         <StyledTitle>{title}</StyledTitle>
         <p>{description}</p>
-        <StyledPhoto src={src} alt={title} />
+        <StyledPhoto src={src} atl={title} />
         <DeletePhoto id={_id} />
       </StyledCard>
     ))}
