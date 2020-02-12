@@ -2,16 +2,13 @@ const mongoose = require('mongoose')
 
 const PhotoSchema = new mongoose.Schema({
   src: {
-    type: String,
-    required: true
+    type: String
   },
   title: {
-    type: String,
-    required: true
+    type: String
   },
   description: {
-    type: String,
-    required: true
+    type: String
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

@@ -1,7 +1,7 @@
+const fs = require('fs')
+const UPLOADS_DIR = '/uploaded/'
 const { models } = require('../../../models')
 const { Photo, User } = models
-
-const { transformPhoto } = require('../merge')
 
 module.exports = {
   Photo: {
@@ -9,10 +9,11 @@ module.exports = {
       photo: async (parent, { _id }, context, info) => {
         return await Photo.findOne({ _id }).exec()
       },
-      photos: async (parent, { author }, context, info) => {
-        const search = {}
-        if (author) search.author = author
-        const photos = await Photo.find(search)
+      photos: async (parent, { author, title }, context, info) => {
+        const query = {}
+        if (author) query.author = author
+        if (title) query.title = new RegExp(title, 'i');
+        const photos = await Photo.find(query)
           .populate()
           .exec()
 
@@ -27,40 +28,43 @@ module.exports = {
       }
     },
     Mutation: {
-      createPhoto: async (parent, { photo }, { user }, info) => {
+      uploadPhoto: async (parent, { file, photo }, { user }, info) => {
         if (!user) throw new Error('Not authorized')
+
+        const { createReadStream, filename, mimetype } = await file
+        const stream = createReadStream()
+
+        if (!/image\/.*/.test(mimetype)) throw new Error('Bad mimetype')
+
         const photoData = {
-          src: photo.src,
           title: photo.title || '',
           description: photo.description || '',
           author: photo.author
         }
         if (photo.date) photoData.date = photo.date
         const newPhoto = await new Photo(photoData)
-
-        let createdPhoto
+        newPhoto.src = `${UPLOADS_DIR}${newPhoto._id}.${filename.split('.').pop()}`
+        
         try {
-          const result = await new Promise((resolve, reject) => {
-            newPhoto.save((err, res) => {
-              err ? reject(err) : resolve(res)
-            })
-          })
-          createdPhoto = transformPhoto(result)
-          const creator = await User.findById(photo.author)
+          await newPhoto.save()
+          
+          if (!fs.existsSync('.'+UPLOADS_DIR)) fs.mkdirSync('.'+UPLOADS_DIR)
+          const writeStream = fs.createWriteStream('.'+newPhoto.src)
+          stream.pipe(writeStream)
 
-          if (!creator) {
-            throw new Error('User not found.')
-          }
+          const creator = await User.findById(photo.author)
+          if (!creator) throw new Error('User not found.')
           creator.photos.push(newPhoto)
           await creator.save()
-          return createdPhoto
-        } catch (error) {
-          console.log(error)
-          throw error
+    
+          return newPhoto
+        } catch (e) {
+          console.log(e)
+          throw e
         }
       },
       updatePhoto: async (parent, { _id, photo }, { user }, info) => {
-        if (!user || user._id !== photo.author || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || (user._id !== photo.author.toString() && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           Photo.findOneAndUpdate({ _id }, { $set: { ...photo } }, { new: true }).exec(
             (err, res) => {
@@ -70,10 +74,10 @@ module.exports = {
         })
       },
       deletePhoto: async (parent, { _id }, { user }, info) => {
-        if (!user || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user) throw new Error('Not authorized')
         try {
           const photo = await Photo.findById(_id)
-          if (user._id !== photo.author) throw new Error('Not authorized')
+          if (user._id !== photo.author.toString() && user.role !== 'admin') throw new Error('Not authorized')
           const creator = await User.findById(photo.author)
           if (!creator) {
             throw new Error('User not found.')
@@ -83,6 +87,8 @@ module.exports = {
             creator.photos.splice(index, 1)
           }
           await creator.save()
+          if (!fs.existsSync('.'+UPLOADS_DIR)) fs.mkdirSync('.'+UPLOADS_DIR)
+          fs.unlinkSync('.'+photo.src)
           return new Promise((resolve, reject) => {
             Photo.findOneAndDelete({ _id }).exec((err, res) => {
               err ? reject(err) : resolve(res)

@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import { useHistory } from "react-router-dom";
 import gql from 'graphql-tag';
-import { useLazyQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 
 const CURRENT_USER = gql`
     query {
@@ -9,6 +9,12 @@ const CURRENT_USER = gql`
             _id
             name
             role
+            photos {
+                _id
+                title
+                description
+                src
+            }
         }
     }
 `;
@@ -16,34 +22,19 @@ const CURRENT_USER = gql`
 const UserContext = createContext(null);
 
 export const UserContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [updateToken, setUpdateToken] = useState(false);
-  const [fetchUser, { data }] = useLazyQuery(CURRENT_USER);
+  const [user, setUser] = useState(undefined);
+  const { data, refetch } = useQuery(CURRENT_USER);
 
-  const doUpdateToken = () => {
-    setUser(null);
-    setUpdateToken(true);
-  };
+  const doUpdateToken = () => setUser(undefined);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if ((!user && token) || updateToken) {
-      fetchUser();
-      setUpdateToken(false);
-    }
-    if (!token) {
-      setUser(undefined);
-    }
-  }, [user, fetchUser, updateToken]);
+    if (!token) setUser(null);
+    if (user === undefined) refetch();
+  }, [user, refetch]);
 
   useEffect(() => {
-    if (data !== undefined) {
-      if (data && data.currentUser) {
-        setUser(data.currentUser);
-      } else {
-        setUser(undefined);
-      }
-    }
+    if (data) setUser(data.currentUser);
   }, [data]);
 
   return (
@@ -58,31 +49,21 @@ export const UserContextProvider = ({ children }) => {
 };
 
 export const useAuthorization = (condition) => {
+  const [fetchedUser, setFetchedUser] = useState(undefined);
   const { user } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
-    if (user !== null) {
-      if (!condition(user)) history.push('/login')
+    if (user !== undefined) {
+      if (!condition(user)) {
+        history.push('/login');
+      } else {
+        setFetchedUser(user);
+      }
     }
   }, [user, condition, history]);
+
+  return { user: fetchedUser };
 };
-
-
-// export const withAuthorization = (condition) => Component => {
-//   class WithAuthorization extends React.Component {
-//
-//     componentDidMount() {
-//       if (!condition)
-//     }
-//
-//     render() {
-//       return (
-//         <Component {...this.props} />
-//       )
-//     }
-//   }
-// };
-
 
 export default UserContext;

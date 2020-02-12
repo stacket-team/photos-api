@@ -5,18 +5,19 @@ const User = `
     password: String!
     role: String!
     photos: [Photo!]!
+    domain: String!
   }
 
   type Query {
     currentUser: User
     user(_id: ID, name: String): User
-    users: [User!]!
+    users(name: String): [User!]!
   }
 
   type Mutation {
     login(name: String!, password: String!): LoginResponse!
-    createUser(name: String!, password: String!): User!
-    updateUser(_id: String!, name: String, password: String): User!
+    createUser(name: String!, password: String!, domain: String!): User!
+    updateUser(_id: String!, name: String, password: String, domain: String): User!
     deleteUser(_id: String!): User
   }
 

@@ -1,13 +1,34 @@
 import React from 'react';
 import { useAuthorization } from "../UserContext/UserContext";
+import ShowUsers from "../components/ShowUsers/ShowUsers";
+import CreateUser from "../components/CreateUser/CreateUser";
+import Header from "../components/Header/Header";
+import Modal from '../components/Modal/Modal';
+import Search, { useSearch } from '../components/Search/Search';
+import gql from 'graphql-tag';
+
+const SEARCH_USERS = gql`
+  query Search($value: String!) {
+    users(name: $value) {
+      _id
+      name
+    }
+  }
+`;
 
 const AdminTemplate = () => {
-  const condition = user => user && user.role === 'admin';
-  useAuthorization(condition);
+  const { user } = useAuthorization((user) => user && user.role === 'admin');
+  const { data, searchProps } = useSearch(SEARCH_USERS);
 
-  return (
-    <h1>admin template</h1>
-  )
+  return user ? (
+    <>
+      <Header loggedAs={user.name}>
+        <Search {...searchProps} placeholder="search user" />
+        <Modal component={CreateUser} big>create user</Modal>
+      </Header>
+      {data ? <ShowUsers {...data} /> : null}
+    </>
+  ) : null;
 };
 
 export default AdminTemplate;

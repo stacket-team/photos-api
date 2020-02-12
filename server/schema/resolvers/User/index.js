@@ -2,23 +2,25 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { models } = require('../../../models')
 const { User, Photo } = models
+const fs = require('fs')
 
 module.exports = {
   User: {
     Query: {
       currentUser: async (parent, args, { user }, info) => {
-        if (!user) throw new Error('Not authorized')
-        return await User.findOne({ _id: user._id }).exec()
+        return user ? await User.findOne({ _id: user._id }).exec() : user;
       },
       user: async (parent, { _id, name }, { user }, info) => {
-        if (!user || (_id ? user._id !== _id : user.name !== name) || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || ((_id ? user._id !== _id : user.name !== name) && user.role !== 'admin')) throw new Error('Not authorized')
         return _id
           ? await User.findOne({ _id }).exec()
           : await User.findOne({ name, role: 'user' }).exec()
       },
-      users: async (parent, args, { user }, info) => {
+      users: async (parent, { name }, { user }, info) => {
         if (!user || user.role !== 'admin') throw new Error('Not authorized')
-        const users = await User.find({ role: 'user' })
+        const query = { role: 'user' }
+        if (name) query.name = new RegExp(name, 'i')
+        const users = await User.find(query)
           .populate()
           .exec()
 
@@ -27,7 +29,8 @@ module.exports = {
           name: u.name,
           password: u.password,
           role: u.role,
-          photos: u.photos
+          photos: u.photos,
+          domain: u.domain
         }))
       }
     },
@@ -62,12 +65,13 @@ module.exports = {
           user,
         }
       },
-      createUser: async (parent, { name, password }, { user }, info) => {
+      createUser: async (parent, { name, password, domain }, { user }, info) => {
         if (!user || user.role !== 'admin') throw new Error('Not authorized')
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = await new User({
           name,
-          password: hashedPassword
+          password: hashedPassword,
+          domain
         })
 
         return new Promise((resolve, reject) => {
@@ -76,11 +80,12 @@ module.exports = {
           })
         })
       },
-      updateUser: async (parent, { _id, name, password }, { user }, info) => {
-        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
+      updateUser: async (parent, { _id, name, password, domain }, { user }, info) => {
+        if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         const $set = {}
         if (name) $set.name = name
         if (password) $set.password = await bcrypt.hash(password, 10)
+        if (domain) $set.domain = domain
         return new Promise((resolve, reject) => {
           User.findOneAndUpdate({ _id }, { $set }, { new: true }).exec( 
             (err, res) => {
@@ -90,10 +95,26 @@ module.exports = {
         })
       },
       deleteUser: async (parent, { _id }, { user }, info) => {
-        if (!user || _id !== user._id || user.role !== 'admin') throw new Error('Not authorized')
+        if (!user || (_id !== user._id && user.role !== 'admin')) throw new Error('Not authorized')
         return new Promise((resolve, reject) => {
           User.findOneAndDelete({ _id }).exec((err, res) => {
-            err ? reject(err) : resolve(res)
+            if (err) { 
+              reject(err) 
+            } else {
+              Photo.find({ author: _id })
+                .then(photos => {
+                  for (let photo of photos) {
+                    Photo.findOneAndDelete({ _id: photo._id }).exec()
+                    fs.unlinkSync('.'+photo.src)
+                  }
+                })
+                .catch((e) => {
+                  console.log(e)
+                })
+                .finally(() => {
+                  resolve(res)
+                })
+            }
           })
         })
       }

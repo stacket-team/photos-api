@@ -6,6 +6,8 @@ const path = require("path")
 const http = require("http")
 const https = require("https")
 const jwt = require("jsonwebtoken")
+const fs = require("fs")
+const cors = require("cors")
 
 const configurations = {
   production: { react: true, ssl: false, port: 80, hostname: "localhost", db: "mongodb://localhost:27017/photos-api" },
@@ -14,6 +16,7 @@ const configurations = {
 
 const environment = process.env.NODE_ENV || "production"
 const config = configurations[environment]
+config.baseUrl = `http${config.ssl ? "s" : ""}://${config.hostname}${[80,443].includes(config.port) ? '' : `:${config.port}`}`
 
 mongoose
   .connect(config.db, {
@@ -49,6 +52,28 @@ const apollo = new ApolloServer({
 })
 
 const app = express()
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || origin.match(/https?:\/\/[a-z0-9\.]+:?[0-9]*/)[0] === config.baseUrl) {
+      callback(null, true)
+    } else {
+      models.User.findOne({ domain: origin }).exec((err, res) => {
+        if (err || !res) {
+          callback(new Error(`${origin} is not allowed by CORS`))
+        } else {
+          callback(null, true)
+        }
+      })
+    }
+  }
+};
+
+app.use(cors(corsOptions));
+
+if (!fs.existsSync('./uploaded')) fs.mkdirSync('./uploaded')
+app.use('/uploaded/', express.static(path.join(__dirname, "./uploaded")))
+
 apollo.applyMiddleware({ app })
 
 if (config.react) {
@@ -73,17 +98,11 @@ if (config.ssl) {
 
 server.listen({ port: config.port }, () => {
   console.log(
-    "Server ready at",
-    `http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}/`
+    `${config.react ? 'React' : 'Server'} ready at`,
+    `${config.baseUrl}/`
   )
   console.log(
     "Graphql endpoint ready at",
-    `http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}${apollo.graphqlPath}`
+    `${config.baseUrl}${apollo.graphqlPath}`
   )
-  if (config.react) {
-    console.log(
-      "React ready at",
-      `http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}/`
-    )
-  }
 })

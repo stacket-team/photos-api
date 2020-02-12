@@ -1,38 +1,34 @@
 import React from 'react';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from "@apollo/react-hooks";
-
-const FETCH_USERS = gql`
-    query {
-        users {
-            name
-            _id
-        }
-    }
-`;
+import { toast } from 'react-toastify';
+import Button from "../Button/Button";
 
 const DELETE_USER = gql`
-    mutation DeleteUser($_id: String!) {
-        deleteUser(_id: $_id) {
-            _id
+    mutation deleteUser($id: String!) {
+        deleteUser(_id: $id) {
+            name
         }
     }
 `;
 
-const DeleteUser = () => {
-  const { loading, error, data } = useQuery(FETCH_USERS);
-  const [deleteUser] = useMutation(DELETE_USER);
+const DeleteUser = ({ id, name }) => {
+  const [ deleteUser ] = useMutation(DELETE_USER);
+  const apolloClient = useApolloClient();
 
-  if (loading) return <p>Loading data...</p>;
-  if (error) return <p>Error :c {error.message}</p>;
+  const handleDelete = () => {
+    deleteUser({variables: { id }})
+      .then(() => {
+        toast.success(`Removed ${name}`);
+        apolloClient.resetStore();
+      })
+      .catch(error => {
+        toast.error(`Couldn't remove ${name}`);
+        console.error(error);
+      });
+  };
 
-  return data.users.map(({ _id, name }) => (
-    <div key={_id}>
-      <p>{_id}</p>
-      <p>{name}</p>
-      <button onClick={() => deleteUser({ variables: {_id: _id} })}>delete user</button>
-    </div>
-  ));
+  return <Button onClick={handleDelete} big>delete user</Button>;
 };
 
 export default DeleteUser;
