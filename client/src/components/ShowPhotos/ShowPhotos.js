@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import DeletePhoto from "../DeletePhoto/DeletePhoto";
 
-const Wrapper = styled.div`
+const BASE_URL = 'http://localhost:5000';
+
+const StyledWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 50px;
@@ -33,9 +35,10 @@ const StyledTitle = styled.div`
   font-weight: 600;
 `;
 
-const StyledPhoto = styled.img`
-  max-width: 400px;
-  max-height: 200px;
+const StyledPhoto = styled.div`
+  min-width: 400px;
+  min-height: 250px;
+  background: url(${(props) => BASE_URL + props.src}) center/contain no-repeat;
 `;
 
 const StyledEmpty = styled.div`
@@ -47,16 +50,18 @@ const StyledEmpty = styled.div`
   align-items: center;
 `;
 
+const StyledDescription = styled.p``;
+
 const ShowPhotos = ({ photos }) => photos.length > 0 ?
-  <Wrapper>
+  <StyledWrapper>
     {photos.map(({ _id, title, description, src }) => (
       <StyledCard key={_id}>
         <StyledTitle>{title}</StyledTitle>
-        <p>{description}</p>
-        <StyledPhoto src={src} atl={title} />
+        <StyledDescription>{description}</StyledDescription>
+        <StyledPhoto src={src} />
         <DeletePhoto id={_id} />
       </StyledCard>
     ))}
-  </Wrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
+  </StyledWrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
 
 export default ShowPhotos;
