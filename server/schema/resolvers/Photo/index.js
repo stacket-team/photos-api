@@ -3,6 +3,17 @@ const UPLOADS_DIR = '/uploaded/'
 const { models } = require('../../../models')
 const { Photo, User } = models
 
+const saveFile = (stream, path) => 
+  new Promise((resolve, reject) => {
+    stream.on('error', error => {
+      if (stream.truncated) {
+        fs.unlinkSync(path)
+      }
+      reject(error)
+    }).on('end', resolve)
+    .pipe(fs.createWriteStream(path))
+  })
+
 module.exports = {
   Photo: {
     Query: {
@@ -49,8 +60,7 @@ module.exports = {
           await newPhoto.save()
           
           if (!fs.existsSync('.'+UPLOADS_DIR)) fs.mkdirSync('.'+UPLOADS_DIR)
-          const writeStream = fs.createWriteStream('.'+newPhoto.src)
-          stream.pipe(writeStream)
+          await saveFile(stream, '.'+newPhoto.src)
 
           const creator = await User.findById(photo.author)
           if (!creator) throw new Error('User not found.')
