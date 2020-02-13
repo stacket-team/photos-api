@@ -35,27 +35,24 @@ const StyledButton = styled(Button)`
 const LoginView = () => {
   const history = useHistory();
 
-  const [login, { error, data }] = useMutation(LOGIN);
+  const [login, { error }] = useMutation(LOGIN);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const { doUpdateToken } = useContext(UserContext);
 
-  useEffect(() => {
-    if (data) {
-      localStorage.setItem('token', data.login.token);
-      doUpdateToken();
-      const role = data.login.user.role;
-      if (role === "admin") {
-        history.push('/admin');
-      } else {
-        history.push('/');
-      }
-    }
-  }, [data, history, doUpdateToken]);
-
   const handleSubmit = e => {
     e.preventDefault();
     login({ variables: { name, password }})
+      .then(({ data: { login } }) => {
+        localStorage.setItem('token', login.token);
+        doUpdateToken();
+        const role = login.user.role;
+        if (role === "admin") {
+          history.push('/admin');
+        } else {
+          history.push('/');
+        }
+      })
       .catch(error => console.error(error));
   };
 

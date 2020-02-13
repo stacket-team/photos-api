@@ -23,19 +23,18 @@ const UserContext = createContext(null);
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(undefined);
-  const { data, refetch } = useQuery(CURRENT_USER);
+  const { refetch } = useQuery(CURRENT_USER);
 
   const doUpdateToken = () => setUser(undefined);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) setUser(null);
-    if (user === undefined) refetch();
+    if (user === undefined) {
+      refetch()
+        .then(({ data: { currentUser } }) => setUser(currentUser));
+    }
   }, [user, refetch]);
-
-  useEffect(() => {
-    if (data) setUser(data.currentUser);
-  }, [data]);
 
   return (
     <UserContext.Provider value={{

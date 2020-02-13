@@ -4,57 +4,24 @@ import Root from './Root';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createUploadLink } from 'apollo-upload-client';
-import { onError } from 'apollo-link-error';
-import { ApolloLink, Observable } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-const cache = new InMemoryCache();
+class Authorization {
+  get headers() {
+    const token = localStorage.getItem('token');
+    return { authorization: token ? `Bearer ${token}` : '' }
+  }
+}
 
-const request = (operation) => {
-  const token = localStorage.getItem('token');
-  operation.setContext({
-    headers: {
-      authorization: token ? `Bearer ${token}` : ''
-    }
-  });
-};
+const authorization = new Authorization();
 
 const client = new ApolloClient({
-  link: ApolloLink.from([
-    onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors)
-        graphQLErrors.forEach(({ message, locations, path }) =>
-          console.log(
-            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-          ),
-        );
-      if (networkError) console.log(`[Network error]: ${networkError}`);
-    }),
-    new ApolloLink((operation, forward) =>
-      new Observable(observer => {
-        let handle;
-        Promise.resolve(operation)
-          .then(oper => request(oper))
-          .then(() => {
-            handle = forward(operation).subscribe({
-              next: observer.next.bind(observer),
-              error: observer.error.bind(observer),
-              complete: observer.complete.bind(observer),
-            });
-          })
-          .catch(observer.error.bind(observer));
-
-        return () => {
-          if (handle) handle.unsubscribe();
-        };
-      })
-    ),
-    createUploadLink({
-      uri: '/graphql',
-      credentials: 'include'
-    })
-  ]),
-  cache
+  link: createUploadLink({
+    uri: '/graphql',
+    headers: authorization.headers,
+    credentials: 'include'
+  }),
+  cache: new InMemoryCache()
 });
 
 ReactDOM.render(
