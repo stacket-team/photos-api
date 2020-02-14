@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node .",
+    "start": "npm run build --prefix client && cross-env NODE_ENV=production node .",
     "server": "nodemon .",
     "client": "npm start --prefix client",
-    "develop": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm run build --prefix client"
+    "develop": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
