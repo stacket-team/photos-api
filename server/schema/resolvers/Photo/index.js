@@ -33,6 +33,7 @@ module.exports = {
           src: p.src,
           title: p.title,
           description: p.description,
+          tags: p.tags,
           author: p.author,
           date: p.date
         }))
@@ -50,6 +51,7 @@ module.exports = {
         const photoData = {
           title: photo.title || '',
           description: photo.description || '',
+          tags: photo.tags || [],
           author: photo.author
         }
         if (photo.date) photoData.date = photo.date

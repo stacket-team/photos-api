@@ -6,6 +6,7 @@ const Photo = `
     src: String!
     title: String!
     description: String!
+    tags: [String]!
     author: User!
     date: String!
   }
@@ -24,6 +25,7 @@ const Photo = `
   input CreatePhotoInput {
     title: String
     description: String
+    tags: [String]
     author: String!
     date: String
   }
@@ -31,6 +33,7 @@ const Photo = `
   input UpdatePhotoInput {
     title: String
     description: String
+    tags: [String]
     author: String
     date: String
   } 

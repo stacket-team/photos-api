@@ -49,12 +49,13 @@ const StyledBar = styled.div`
   transition: all 0.1s;
 `;
 
-const FormItem = ({ id, name, type, onChange, htmlFor, content }) => (
+const FormItem = ({ id, type, onChange }) => (
   <StyledFormItem>
-    <StyledInput id={id} name={name} type={type} placeholder=" " onChange={onChange} />
-    <StyledLabel htmlFor={htmlFor}>{content}</StyledLabel>
+    <StyledInput id={id} type={type} placeholder=" " onChange={onChange} />
+    <StyledLabel htmlFor={id}>{id}</StyledLabel>
     <StyledBar />
   </StyledFormItem>
 );
 
+export { StyledFormItem, StyledInput, StyledLabel, StyledBar };
 export default FormItem;
