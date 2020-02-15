@@ -36,6 +36,8 @@ const StyledUploadText = styled.p`
   color: ${({ theme }) => theme.color.primary};
 `;
 
+const StyledUploadedPhoto = styled.img``;
+
 const StyledButton = styled(Button)`
   margin: 30px auto 0;
 `;
@@ -59,18 +61,17 @@ const UploadFile = ({ user, closeModal }) => {
   const handleTitleChange = e => setTitle(e.target.value);
   const handleDescriptionChange = e => setDescription(e.target.value);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description } })
-      .then(() => {
-        toast.success('image uploaded');
-        closeModal();
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error("couldn't upload photo");
-        console.error(error);
-      });
+    try {
+      await uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description} });
+      toast.success('image uploaded');
+      closeModal();
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error("couldn't upload photo");
+      console.error(error);
+    }
   };
 
   return (
@@ -79,7 +80,8 @@ const UploadFile = ({ user, closeModal }) => {
       <FormItem name="description" id="description" onChange={handleDescriptionChange} content="description" htmlFor="description" />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText>}
+        {/*{ fileData ? <StyledUploadedPhoto src={fileData} alt="uploaded file" /> : <StyledUploadText>drag and drop image here</StyledUploadText> }*/}
+        { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText> }
         </StyledInnerWrapper>
       <StyledButton type="submit" big>upload photo</StyledButton>
     </Form>
