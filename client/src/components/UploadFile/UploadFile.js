@@ -37,6 +37,8 @@ const StyledUploadText = styled.p`
   color: ${({ theme }) => theme.color.primary};
 `;
 
+const StyledUploadedPhoto = styled.img``;
+
 const StyledButton = styled(Button)`
   margin: 30px auto 0;
 `;
@@ -62,18 +64,17 @@ const UploadFile = ({ user, closeModal }) => {
   const handleDescriptionChange = e => setDescription(e.target.value);
   const handleTagsChange = value => setTags(value);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description, tags } })
-      .then(() => {
-        toast.success('image uploaded');
-        closeModal();
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error("couldn't upload photo");
-        console.error(error);
-      });
+    try {
+      await uploadFileMutation({ variables: { file: uploadedFile.current, author: user._id, title, description, tags } });
+      toast.success('image uploaded');
+      closeModal();
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error("couldn't upload photo");
+      console.error(error);
+    }
   };
 
   return (
@@ -83,8 +84,9 @@ const UploadFile = ({ user, closeModal }) => {
       <FormItemTags id="tags" onChange={handleTagsChange} />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText>}
-      </StyledInnerWrapper>
+        {/*{ fileData ? <StyledUploadedPhoto src={fileData} alt="uploaded file" /> : <StyledUploadText>drag and drop image here</StyledUploadText> }*/}
+        { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText> }
+        </StyledInnerWrapper>
       <StyledButton type="submit" big>upload photo</StyledButton>
     </Form>
     );
