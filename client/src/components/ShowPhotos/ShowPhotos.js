@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import DeletePhoto from "../DeletePhoto/DeletePhoto";
 
-const BASE_URL = 'http://localhost:5000';
-
 const StyledWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -38,7 +36,7 @@ const StyledTitle = styled.div`
 const StyledPhoto = styled.div`
   min-width: 400px;
   min-height: 250px;
-  background: url(${(props) => BASE_URL + props.src}) center/contain no-repeat;
+  background: url(${(props) => process.env.REACT_APP_BACKEND_BASE + props.src}) center/contain no-repeat;
 `;
 
 const StyledEmpty = styled.div`

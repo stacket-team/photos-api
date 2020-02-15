@@ -17,9 +17,8 @@ const authorization = new Authorization();
 
 const client = new ApolloClient({
   link: createUploadLink({
-    uri: '/graphql',
-    headers: authorization.headers,
-    credentials: 'include'
+    uri: `${ process.env.REACT_APP_BACKEND_BASE }/graphql`,
+    headers: authorization.headers
   }),
   cache: new InMemoryCache()
 });
