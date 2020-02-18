@@ -19,7 +19,7 @@ const StyledWrapper = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const Modal = ({ children, component: Component, big, props }) => {
+const Modal = ({ children, component: Component, big, props, buttonProps, button: StyledButton }) => {
   const [isOpen, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -27,7 +27,7 @@ const Modal = ({ children, component: Component, big, props }) => {
 
   return (
     <>
-      <Button onClick={handleOpen} big={big}>{children}</Button>
+      { StyledButton ? <StyledButton onClick={handleOpen} {...buttonProps}>{children}</StyledButton> : <Button onClick={handleOpen} big={big}>{children}</Button> }
       {isOpen ? (
       <>
         <StyledBackground onClick={handleClose} />

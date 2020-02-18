@@ -24,7 +24,7 @@ const ClientTemplate = () => {
 
   return user ? (
     <>
-      <Header loggedAs={user.name}>
+      <Header user={user}>
         <Search {...searchProps} placeholder="search photo" />
         <Modal component={UploadFile} props={{user}} big>upload photo</Modal>
       </Header>

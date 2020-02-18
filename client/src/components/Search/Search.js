@@ -41,7 +41,7 @@ const Search = props => (
   </StyledFormItem>
 );
 
-export const useSearch = ( query, additionalVariables ) => {
+export const useSearch = (query, additionalVariables) => {
   const [value, setValue] = useState('');
   const { loading, error, data } = useQuery(query, { variables: { value, ...additionalVariables } });
 

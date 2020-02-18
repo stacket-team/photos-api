@@ -16,16 +16,15 @@ const DeleteUser = ({ id, name }) => {
   const [ deleteUser ] = useMutation(DELETE_USER);
   const apolloClient = useApolloClient();
 
-  const handleDelete = () => {
-    deleteUser({variables: { id }})
-      .then(() => {
-        toast.success(`Removed ${name}`);
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error(`Couldn't remove ${name}`);
-        console.error(error);
-      });
+  const handleDelete = async () => {
+    try {
+      await deleteUser({ variables: { id } });
+      toast.success(`removed ${name}`);
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error(`couldn't remove ${name}`);
+      console.error(error);
+    }
   };
 
   return <Button onClick={handleDelete} big>delete user</Button>;

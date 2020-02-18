@@ -18,16 +18,15 @@ const DeletePhoto = ({ id }) => {
   const [deletePhoto] = useMutation(DELETE_PHOTO);
   const apolloClient = useApolloClient();
 
-  const handleDelete = () => {
-    deletePhoto({ variables: { id } })
-      .then(() => {
-        toast.success('deleted user');
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error("couldn't remove photo");
-        console.error(error);
-    });
+  const handleDelete = async () => {
+    try {
+      await deletePhoto({ variables: { id } });
+      toast.success('deleted user');
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error(`couldn't remove photo`);
+      console.error(error);
+    }
   };
 
   return user ? (

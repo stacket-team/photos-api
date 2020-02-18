@@ -9,8 +9,8 @@ const CustomStyledLabel = styled(StyledLabel)`
     font-size: 18px;
   }
   &.extended {
-    top: 0!important;
-    font-size: 24px!important;
+    top: 0 !important;
+    font-size: 24px !important;
   }
 `;
 
@@ -56,13 +56,14 @@ const Tag = ({ tag, i, setTags }) => {
       }
       return [...prevTags];
     });
-  }
+  };
+
   const handleRemove = () => {
     setTags(prevTags => {
       prevTags.splice(i, 1);
       return [...prevTags];
     });
-  }
+  };
 
   return (
     <StyledTag>
@@ -70,13 +71,13 @@ const Tag = ({ tag, i, setTags }) => {
       <StyledRemove onClick={handleRemove}>x</StyledRemove>
     </StyledTag>
   );
-}
+};
 
 const FormItemTags = ({ id, onChange }) => {
   const [ tags, setTags ] = useState([]);
   const [ input, setInput ] = useState('');
   const [ active, setActive ] = useState(false);
-  
+
   const handleInput = ({ target: { value } }) => {
     const tags = value.split(',').filter(tag => tag.trim());
     if (tags.length > 1) {
@@ -88,7 +89,8 @@ const FormItemTags = ({ id, onChange }) => {
     } else {
       setInput(value);
     }
-  }
+  };
+
   const handleBlur = ({ target: { value } }) => {
     const tags = value.split(',').map(tag => tag.trim()).filter(tag => tag);
     setInput('');
@@ -97,7 +99,7 @@ const FormItemTags = ({ id, onChange }) => {
       return [...prevTags];
     });
     setActive(false);
-  }
+  };
   const handleFocus = () => setActive(true);
 
   useEffect(() => {
