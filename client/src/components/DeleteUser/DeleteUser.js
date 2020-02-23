@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { toast } from 'react-toastify';
@@ -16,19 +17,23 @@ const DeleteUser = ({ id, name }) => {
   const [ deleteUser ] = useMutation(DELETE_USER);
   const apolloClient = useApolloClient();
 
-  const handleDelete = () => {
-    deleteUser({variables: { id }})
-      .then(() => {
-        toast.success(`Removed ${name}`);
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error(`Couldn't remove ${name}`);
-        console.error(error);
-      });
+  const handleDelete = async () => {
+    try {
+      await deleteUser({ variables: { id } });
+      toast.success(`removed ${name}`);
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error(`couldn't remove ${name}`);
+      console.error(error);
+    }
   };
 
   return <Button onClick={handleDelete} big>delete user</Button>;
 };
 
 export default DeleteUser;
+
+DeleteUser.propTypes ={
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
+};

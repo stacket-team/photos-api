@@ -8,10 +8,14 @@ const LogoutButton = () => {
   const { doUpdateToken } = useContext(UserContext);
 
   return (
-    <Button onClick={() => {
-      localStorage.removeItem('token');
-      doUpdateToken();
-      apolloClient.resetStore();
+    <Button onClick={async () => {
+      try {
+        localStorage.removeItem('token');
+        doUpdateToken();
+        await apolloClient.resetStore();
+      } catch (error) {
+       console.error(error);
+      }
     }}>logout</Button>
   )
 };

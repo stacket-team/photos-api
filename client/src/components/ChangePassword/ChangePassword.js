@@ -8,9 +8,9 @@ import styled from "styled-components";
 import Form from "../Form/Form";
 import FormItem from "../Form/FormItem";
 
-const CREATE_USER = gql`
-    mutation User($name: String!, $password: String!, $domain: String!) {
-        createUser(name: $name, password: $password, domain: $domain) {
+const UPDATE_USER = gql`
+    mutation UpdateUser($_id: String!, $password: String!) {
+        updateUser(_id: $_id, password: $password) {
             _id
         }
     }
@@ -20,42 +20,37 @@ const StyledButton = styled(Button)`
   margin: 30px auto 0;
 `;
 
-const CreateUser = ({ closeModal }) => {
-  const [name, setName] = useState('');
+const ChangePassword = ({ closeModal, _id }) => {
   const [password, setPassword] = useState('');
-  const [domain, setDomain] = useState('');
-  const [createUser] = useMutation(CREATE_USER);
+  const [updateUser] = useMutation(UPDATE_USER);
   const apolloClient = useApolloClient();
 
-  const handleNameChange = e => setName(e.target.value);
   const handlePasswordChange = e => setPassword(e.target.value);
-  const handleDomainChange = e => setDomain(e.target.value);
 
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await createUser({ variables: {name, password, domain} });
-      toast.success(`created ${name}`);
+      await updateUser({ variables: { _id, password } });
+      toast.success('updated password');
       closeModal();
       await apolloClient.resetStore();
     } catch (error) {
-      toast.error(`couldn't create ${name}`);
+      toast.error('error occured');
       console.error(error);
     }
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormItem id="name" name="name" type="text" onChange={handleNameChange} content="username" htmlFor="name" />
       <FormItem id="password" name="password" type="password" onChange={handlePasswordChange} content="password" htmlFor="password" />
-      <FormItem id="domain" name="domain" type="domain" onChange={handleDomainChange} content="domain" htmlFor="domain" />
-      <StyledButton type="submit" big>create user</StyledButton>
+      <StyledButton type="submit" big>update</StyledButton>
     </Form>
   );
 };
 
-export default CreateUser;
+export default ChangePassword;
 
-CreateUser.propTypes = {
-  closeModal: PropTypes.func.isRequired
+ChangePassword.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  _id: PropTypes.string.isRequired
 };

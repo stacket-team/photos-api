@@ -22,7 +22,7 @@ const AdminTemplate = () => {
 
   return user ? (
     <>
-      <Header loggedAs={user.name}>
+      <Header user={user}>
         <Search {...searchProps} placeholder="search user" />
         <Modal component={CreateUser} big>create user</Modal>
       </Header>

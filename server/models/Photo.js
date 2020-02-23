@@ -10,6 +10,9 @@ const PhotoSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  tags: {
+    type: [String]
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

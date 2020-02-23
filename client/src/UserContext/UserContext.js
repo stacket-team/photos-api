@@ -1,4 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from "react-router-dom";
 import gql from 'graphql-tag';
 import { useQuery } from "@apollo/react-hooks";
@@ -23,19 +24,18 @@ const UserContext = createContext(null);
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(undefined);
-  const { data, refetch } = useQuery(CURRENT_USER);
+  const { refetch } = useQuery(CURRENT_USER);
 
   const doUpdateToken = () => setUser(undefined);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) setUser(null);
-    if (user === undefined) refetch();
+    if (user === undefined) {
+      refetch()
+        .then(({ data: { currentUser } }) => setUser(currentUser));
+    }
   }, [user, refetch]);
-
-  useEffect(() => {
-    if (data) setUser(data.currentUser);
-  }, [data]);
 
   return (
     <UserContext.Provider value={{
@@ -46,6 +46,10 @@ export const UserContextProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   )
+};
+
+UserContextProvider.propTypes = {
+  children: PropTypes.object.isRequired,
 };
 
 export const useAuthorization = (condition) => {
@@ -64,6 +68,10 @@ export const useAuthorization = (condition) => {
   }, [user, condition, history]);
 
   return { user: fetchedUser };
+};
+
+useAuthorization.propTypes = {
+  condition: PropTypes.bool.isRequired
 };
 
 export default UserContext;

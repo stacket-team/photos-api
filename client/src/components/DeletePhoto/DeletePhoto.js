@@ -1,4 +1,5 @@
 import React, {useContext} from 'react';
+import PropTypes from 'prop-types';
 import UserContext from "../../UserContext/UserContext";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
@@ -18,16 +19,15 @@ const DeletePhoto = ({ id }) => {
   const [deletePhoto] = useMutation(DELETE_PHOTO);
   const apolloClient = useApolloClient();
 
-  const handleDelete = () => {
-    deletePhoto({ variables: { id } })
-      .then(() => {
-        toast.success('deleted user');
-        apolloClient.resetStore();
-      })
-      .catch(error => {
-        toast.error("couldn't remove photo");
-        console.error(error);
-    });
+  const handleDelete = async () => {
+    try {
+      await deletePhoto({ variables: { id } });
+      toast.success('deleted user');
+      await apolloClient.resetStore();
+    } catch (error) {
+      toast.error(`couldn't remove photo`);
+      console.error(error);
+    }
   };
 
   return user ? (
@@ -36,3 +36,7 @@ const DeletePhoto = ({ id }) => {
 };
 
 export default DeletePhoto;
+
+DeletePhoto.propTypes = {
+  id: PropTypes.string.isRequired
+};

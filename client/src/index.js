@@ -4,11 +4,9 @@ import Root from './Root';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createUploadLink } from 'apollo-upload-client';
-import { onError } from 'apollo-link-error';
-import { ApolloLink, Observable } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
-
-const cache = new InMemoryCache();
+import { onError } from 'apollo-link-error';	
+import { ApolloLink, Observable } from 'apollo-link';
 
 const request = (operation) => {
   const token = localStorage.getItem('token');
@@ -50,11 +48,10 @@ const client = new ApolloClient({
       })
     ),
     createUploadLink({
-      uri: '/graphql',
-      credentials: 'include'
+      uri: `${ process.env.REACT_APP_BACKEND_BASE }/graphql`
     })
   ]),
-  cache
+  cache: new InMemoryCache()
 });
 
 ReactDOM.render(

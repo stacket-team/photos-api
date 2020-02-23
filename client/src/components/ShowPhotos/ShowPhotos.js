@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import DeletePhoto from "../DeletePhoto/DeletePhoto";
 
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 50px;
@@ -10,6 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const StyledCard = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,9 +35,10 @@ const StyledTitle = styled.div`
   font-weight: 600;
 `;
 
-const StyledPhoto = styled.img`
-  max-width: 400px;
-  max-height: 200px;
+const StyledPhoto = styled.div`
+  min-width: 400px;
+  min-height: 250px;
+  background: url(${(props) => process.env.REACT_APP_BACKEND_BASE + props.src}) center/contain no-repeat;
 `;
 
 const StyledEmpty = styled.div`
@@ -47,16 +50,29 @@ const StyledEmpty = styled.div`
   align-items: center;
 `;
 
+const StyledDescription = styled.p`
+  margin-top: 5px;
+`;
+
+const StyledTags = styled.p`
+  margin-top: 5px;
+`;
+
 const ShowPhotos = ({ photos }) => photos.length > 0 ?
-  <Wrapper>
-    {photos.map(({ _id, title, description, src }) => (
+  <StyledWrapper>
+    {photos.map(({ _id, title, description, src, tags }) => (
       <StyledCard key={_id}>
         <StyledTitle>{title}</StyledTitle>
-        <p>{description}</p>
-        <StyledPhoto src={src} atl={title} />
+        <StyledDescription>{description}</StyledDescription>
+        { tags.length > 0 ? <StyledTags>{tags.join(' ')}</StyledTags> : <StyledTags>photo doesn't have any tags</StyledTags> }
+        <StyledPhoto src={src} />
         <DeletePhoto id={_id} />
       </StyledCard>
     ))}
-  </Wrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
+  </StyledWrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
 
 export default ShowPhotos;
+
+ShowPhotos.propTypes = {
+  photos: PropTypes.array.isRequired
+};

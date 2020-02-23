@@ -3,15 +3,27 @@ const UPLOADS_DIR = '/uploaded/'
 const { models } = require('../../../models')
 const { Photo, User } = models
 
+const saveFile = (stream, path) => 
+  new Promise((resolve, reject) => {
+    stream.on('error', error => {
+      if (stream.truncated) {
+        fs.unlinkSync(path)
+      }
+      reject(error)
+    }).on('end', resolve)
+    .pipe(fs.createWriteStream(path))
+  })
+
 module.exports = {
   Photo: {
     Query: {
       photo: async (parent, { _id }, context, info) => {
         return await Photo.findOne({ _id }).exec()
       },
-      photos: async (parent, { author, title }, context, info) => {
+      photos: async (parent, { author, tag, title }, context, info) => {
         const query = {}
         if (author) query.author = author
+        if (tag) query.tags = tag;
         if (title) query.title = new RegExp(title, 'i');
         const photos = await Photo.find(query)
           .populate()
@@ -22,6 +34,7 @@ module.exports = {
           src: p.src,
           title: p.title,
           description: p.description,
+          tags: p.tags,
           author: p.author,
           date: p.date
         }))
@@ -39,6 +52,7 @@ module.exports = {
         const photoData = {
           title: photo.title || '',
           description: photo.description || '',
+          tags: photo.tags || [],
           author: photo.author
         }
         if (photo.date) photoData.date = photo.date
@@ -49,8 +63,7 @@ module.exports = {
           await newPhoto.save()
           
           if (!fs.existsSync('.'+UPLOADS_DIR)) fs.mkdirSync('.'+UPLOADS_DIR)
-          const writeStream = fs.createWriteStream('.'+newPhoto.src)
-          stream.pipe(writeStream)
+          await saveFile(stream, '.'+newPhoto.src)
 
           const creator = await User.findById(photo.author)
           if (!creator) throw new Error('User not found.')

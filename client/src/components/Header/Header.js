@@ -1,6 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import LogoutButton from "../LogutButton/LogutButton";
+import settings from '../../assets/images/settings.svg';
+import Modal from "../Modal/Modal";
+import ChangePassword from "../ChangePassword/ChangePassword";
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -17,12 +21,28 @@ const StyledInnerWrapper = styled.div`
   height: 40px;
   align-items: center;
   justify-content: space-around;
-  width: 600px;
+  width: 700px;
 `;
 
-const Header = ({ loggedAs, children }) => (
+const StyledFlexWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 300px;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const StyledSettings = styled.img`
+  width: 30px;
+  height: 30px;
+`;
+
+const Header = ({ user: { name, _id }, children }) => (
   <StyledWrapper>
-    <p>logged as: {loggedAs}</p>
+    <StyledFlexWrapper>
+      <Modal component={ChangePassword} props={{ _id }} button={StyledSettings} buttonProps={{ src: settings }} />
+      <p>logged as: {name}</p>
+    </StyledFlexWrapper>
     <StyledInnerWrapper>
       { children }
       <LogoutButton />
@@ -31,3 +51,14 @@ const Header = ({ loggedAs, children }) => (
 );
 
 export default Header;
+
+Header.propTypes = {
+  name: PropTypes.string,
+  _id: PropTypes.string,
+  children: PropTypes.array.isRequired
+};
+
+Header.defaultProps = {
+  name: undefined,
+  _id: undefined
+};
