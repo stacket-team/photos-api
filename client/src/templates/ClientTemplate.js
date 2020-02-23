@@ -14,6 +14,7 @@ const SEARCH_PHOTOS = gql`
       title
       description
       src
+      tags
     }
   }
 `;

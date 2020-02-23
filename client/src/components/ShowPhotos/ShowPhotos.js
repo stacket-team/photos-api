@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import DeletePhoto from "../DeletePhoto/DeletePhoto";
+import Modal from "../Modal/Modal";
+import ChangePassword from "../ChangePassword/ChangePassword";
 
 const StyledWrapper = styled.div`
   display: grid;
@@ -10,6 +12,7 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledCard = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,14 +51,21 @@ const StyledEmpty = styled.div`
   align-items: center;
 `;
 
-const StyledDescription = styled.p``;
+const StyledDescription = styled.p`
+  margin-top: 5px;
+`;
+
+const StyledTags = styled.p`
+  margin-top: 5px;
+`;
 
 const ShowPhotos = ({ photos }) => photos.length > 0 ?
   <StyledWrapper>
-    {photos.map(({ _id, title, description, src }) => (
+    {photos.map(({ _id, title, description, src, tags }) => (
       <StyledCard key={_id}>
         <StyledTitle>{title}</StyledTitle>
         <StyledDescription>{description}</StyledDescription>
+        { tags.length > 0 ? <StyledTags>{tags.join(' ')}</StyledTags> : <StyledTags>photo doesn't have any tags</StyledTags> }
         <StyledPhoto src={src} />
         <DeletePhoto id={_id} />
       </StyledCard>

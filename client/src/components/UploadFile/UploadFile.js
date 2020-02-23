@@ -37,7 +37,7 @@ const StyledUploadText = styled.p`
   color: ${({ theme }) => theme.color.primary};
 `;
 
-const StyledUploadedPhoto = styled.img``;
+// const StyledUploadedPhoto = styled.img``;
 
 const StyledButton = styled(Button)`
   margin: 30px auto 0;

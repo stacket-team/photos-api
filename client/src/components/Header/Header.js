@@ -20,7 +20,7 @@ const StyledInnerWrapper = styled.div`
   height: 40px;
   align-items: center;
   justify-content: space-around;
-  width: 600px;
+  width: 700px;
 `;
 
 const StyledFlexWrapper = styled.div`

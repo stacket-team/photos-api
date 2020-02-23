@@ -43,22 +43,31 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledSelect = styled.select``;
+const StyledSelect = styled.select`
+  background: none;
+  color: ${({ theme }) => theme.color.white};
+  font-size: 20px;
+  padding: 0 10px;
+  border: none;
+`;
+
 const StyledOption = styled.option``;
 
 const SearchWithTags = ({ search, tag, tags, placeholder }) => (
-  <StyledFormItem>
-    <StyledInput { ...search } placeholder={placeholder} />
+  <>
+    <StyledFormItem>
+      <StyledInput { ...search } placeholder={placeholder} />
+      <StyledBar />
+    </StyledFormItem>
     <StyledSelect { ...tag }>
       <StyledOption value='' >Select tag</StyledOption>
-      { tags.map((tag, i) => (
+      {tags.map((tag, i) => (
         <StyledOption key={i}>
           {tag}
         </StyledOption>
-      )) }
+      ))}
     </StyledSelect>
-    <StyledBar />
-  </StyledFormItem>
+  </>
 );
 
 export const useSearchWithTags = (query, additionalVariables) => {
@@ -84,10 +93,10 @@ export const useSearchWithTags = (query, additionalVariables) => {
   }, [tagsData, setTags]);
 
   return {
-    searchProps: { 
-      search: { value, onChange: handleValue }, 
-      tag: { value: tag, onChange: handleTag }, 
-      tags 
+    searchProps: {
+      search: { value, onChange: handleValue },
+      tag: { value: tag, onChange: handleTag },
+      tags
     },
     loading: tagsLoading || photosLoading,
     error: tagsError || photosError,
