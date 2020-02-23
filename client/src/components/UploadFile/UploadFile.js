@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useDropzone } from 'react-dropzone';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
@@ -36,8 +37,6 @@ const StyledInnerWrapper = styled.div`
 const StyledUploadText = styled.p`
   color: ${({ theme }) => theme.color.primary};
 `;
-
-// const StyledUploadedPhoto = styled.img``;
 
 const StyledButton = styled(Button)`
   margin: 30px auto 0;
@@ -79,12 +78,11 @@ const UploadFile = ({ user, closeModal }) => {
 
   return (
     <Form onSubmit={handleSubmit} big>
-      <FormItem id="title" onChange={handleTitleChange} />
-      <FormItem id="description" onChange={handleDescriptionChange} />
+      <FormItem id="title" onChange={handleTitleChange} type="text" />
+      <FormItem id="description" onChange={handleDescriptionChange} type="text" />
       <FormItemTags id="tags" onChange={handleTagsChange} />
       <StyledInnerWrapper { ...getRootProps() }>
         <input {...getInputProps()} />
-        {/*{ fileData ? <StyledUploadedPhoto src={fileData} alt="uploaded file" /> : <StyledUploadText>drag and drop image here</StyledUploadText> }*/}
         { fileData ? <StyledUploadText>image uploaded</StyledUploadText> : <StyledUploadText>drag and drop image here</StyledUploadText> }
         </StyledInnerWrapper>
       <StyledButton type="submit" big>upload photo</StyledButton>
@@ -93,3 +91,8 @@ const UploadFile = ({ user, closeModal }) => {
 };
 
 export default UploadFile;
+
+UploadFile.propTypes = {
+  user: PropTypes.object.isRequired,
+  closeModal: PropTypes.func.isRequired
+};

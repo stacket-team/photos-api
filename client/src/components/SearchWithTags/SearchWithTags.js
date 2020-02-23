@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import {StyledBar, StyledInput as Input} from "../Form/FormItem";
 
 const SEARCH_TAGS = gql`
   query Search($author: ID) {
@@ -18,25 +20,8 @@ const StyledFormItem = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledBar = styled.div`
-  width: 100%;
-  height: 2px;
-  background: ${({ theme }) => theme.color.red};
-  transition: all 0.1s;
-`;
-
-const StyledInput = styled.input` 
-  color: white;
-  font-size: 24px;
-  border: none;
-  line-height: 22px;
-  height: 100%;
-  background: none;
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-  }
+const StyledInput = styled(Input)`
+  color: ${({ theme }) => theme.color.white};
   
   &::placeholder {
     color: ${({ theme }) => theme.color.white};
@@ -62,7 +47,7 @@ const SearchWithTags = ({ search, tag, tags, placeholder }) => (
       <StyledBar />
     </StyledFormItem>
     <StyledSelect { ...tag }>
-      <StyledOption value='' >Select tag</StyledOption>
+      <StyledOption value='' >no tags</StyledOption>
       {tags.map((tag, i) => (
         <StyledOption key={i}>
           {tag}
@@ -71,6 +56,13 @@ const SearchWithTags = ({ search, tag, tags, placeholder }) => (
     </StyledSelect>
   </>
 );
+
+SearchWithTags.propTypes = {
+  search: PropTypes.object.isRequired,
+  tag: PropTypes.object.isRequired,
+  tags: PropTypes.array.isRequired,
+  placeholder: PropTypes.string.isRequired
+};
 
 export const useSearchWithTags = (query, additionalVariables) => {
   const [value, setValue] = useState('');
@@ -107,3 +99,13 @@ export const useSearchWithTags = (query, additionalVariables) => {
 };
 
 export default SearchWithTags;
+
+SearchWithTags.propTypes = {
+  query: PropTypes.object,
+  additionalVariables: PropTypes.object
+};
+
+SearchWithTags.defaultProps = {
+  query: undefined,
+  additionalVariables: undefined
+};

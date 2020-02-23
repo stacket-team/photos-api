@@ -1,8 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import DeletePhoto from "../DeletePhoto/DeletePhoto";
-import Modal from "../Modal/Modal";
-import ChangePassword from "../ChangePassword/ChangePassword";
 
 const StyledWrapper = styled.div`
   display: grid;
@@ -73,3 +72,7 @@ const ShowPhotos = ({ photos }) => photos.length > 0 ?
   </StyledWrapper> : <StyledEmpty>couldn't find any photos</StyledEmpty>;
 
 export default ShowPhotos;
+
+ShowPhotos.propTypes = {
+  photos: PropTypes.array.isRequired
+};

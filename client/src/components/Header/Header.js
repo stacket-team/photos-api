@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import LogoutButton from "../LogutButton/LogutButton";
 import settings from '../../assets/images/settings.svg';
@@ -50,3 +51,14 @@ const Header = ({ user: { name, _id }, children }) => (
 );
 
 export default Header;
+
+Header.propTypes = {
+  name: PropTypes.string,
+  _id: PropTypes.string,
+  children: PropTypes.array.isRequired
+};
+
+Header.defaultProps = {
+  name: undefined,
+  _id: undefined
+};

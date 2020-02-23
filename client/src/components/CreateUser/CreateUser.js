@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import { toast } from 'react-toastify';
@@ -54,3 +55,7 @@ const CreateUser = ({ closeModal }) => {
 };
 
 export default CreateUser;
+
+CreateUser.propTypes = {
+  closeModal: PropTypes.func.isRequired
+};

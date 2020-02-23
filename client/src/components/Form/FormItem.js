@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const StyledFormItem = styled.div`
@@ -16,16 +17,16 @@ const StyledInput = styled.input`
   height: 100%;
   background: none;
   width: 100%;
-  
+
   &:focus {
     outline: none;
   }
-  
+
   &:focus + label {
     top: -22px;
     font-size: 18px;
   }
-  
+
   &:not(:placeholder-shown) + label {
     top: -22px;
     font-size: 18px;
@@ -49,9 +50,9 @@ const StyledBar = styled.div`
   transition: all 0.1s;
 `;
 
-const FormItem = ({ id, type, onChange }) => (
+const FormItem = ({ id, type, onChange, className }) => (
   <StyledFormItem>
-    <StyledInput id={id} type={type} placeholder=" " onChange={onChange} />
+    <StyledInput className={className} id={id} type={type} placeholder=" " onChange={onChange} />
     <StyledLabel htmlFor={id}>{id}</StyledLabel>
     <StyledBar />
   </StyledFormItem>
@@ -59,3 +60,9 @@ const FormItem = ({ id, type, onChange }) => (
 
 export { StyledFormItem, StyledInput, StyledLabel, StyledBar };
 export default FormItem;
+
+FormItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
+};

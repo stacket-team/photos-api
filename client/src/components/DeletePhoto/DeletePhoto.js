@@ -1,4 +1,5 @@
 import React, {useContext} from 'react';
+import PropTypes from 'prop-types';
 import UserContext from "../../UserContext/UserContext";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
@@ -35,3 +36,7 @@ const DeletePhoto = ({ id }) => {
 };
 
 export default DeletePhoto;
+
+DeletePhoto.propTypes = {
+  id: PropTypes.string.isRequired
+};

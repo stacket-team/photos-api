@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-
 import { StyledFormItem, StyledInput, StyledLabel, StyledBar } from "./FormItem";
 
 const CustomStyledLabel = styled(StyledLabel)`
@@ -73,6 +73,12 @@ const Tag = ({ tag, i, setTags }) => {
   );
 };
 
+Tag.propTypes = {
+  tag: PropTypes.string.isRequired,
+  i: PropTypes.number.isRequired,
+  setTags: PropTypes.func.isRequired
+};
+
 const FormItemTags = ({ id, onChange }) => {
   const [ tags, setTags ] = useState([]);
   const [ input, setInput ] = useState('');
@@ -119,3 +125,8 @@ const FormItemTags = ({ id, onChange }) => {
 };
 
 export default FormItemTags;
+
+FormItemTags.propTypes = {
+  id: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
+};

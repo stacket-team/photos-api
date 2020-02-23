@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { toast } from 'react-toastify';
@@ -31,3 +32,8 @@ const DeleteUser = ({ id, name }) => {
 };
 
 export default DeleteUser;
+
+DeleteUser.propTypes ={
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
+};

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import PropTypes from "prop-types";
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
+import { StyledBar, StyledInput as Input } from "../Form/FormItem";
 
 const StyledFormItem = styled.div`
   width: 250px;
@@ -9,25 +11,8 @@ const StyledFormItem = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledBar = styled.div`
-  width: 100%;
-  height: 2px;
-  background: ${({ theme }) => theme.color.red};
-  transition: all 0.1s;
-`;
-
-const StyledInput = styled.input` 
-  color: white;
-  font-size: 24px;
-  border: none;
-  line-height: 22px;
-  height: 100%;
-  background: none;
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-  }
+const StyledInput = styled(Input)`
+  color: ${({ theme }) => theme.color.white};
   
   &::placeholder {
     color: ${({ theme }) => theme.color.white};
@@ -40,6 +25,10 @@ const Search = props => (
     <StyledBar />
   </StyledFormItem>
 );
+
+Search.propTypes = {
+  props: PropTypes.object.isRequired
+};
 
 export const useSearch = (query, additionalVariables) => {
   const [value, setValue] = useState('');
@@ -56,3 +45,8 @@ export const useSearch = (query, additionalVariables) => {
 };
 
 export default Search;
+
+useSearch.propTypes = {
+  query: PropTypes.object.isRequired,
+  additionalData: PropTypes.object.isRequired
+};

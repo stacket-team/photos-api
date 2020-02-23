@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Button from '../Button/Button';
 import styled from 'styled-components';
 
@@ -43,3 +44,20 @@ const Modal = ({ children, component: Component, big, props, buttonProps, button
 };
 
 export default Modal;
+
+Modal.propTypes = {
+  children: PropTypes.string,
+  component: PropTypes.func.isRequired,
+  big: PropTypes.bool,
+  props: PropTypes.object,
+  buttonProps: PropTypes.object,
+  button: PropTypes.object
+};
+
+Modal.defaultProps = {
+  children: undefined,
+  big: false,
+  props: undefined,
+  buttonProps: undefined,
+  button: undefined
+};

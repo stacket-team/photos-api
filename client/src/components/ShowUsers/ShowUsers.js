@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import DeleteUser from '../DeleteUser/DeleteUser';
 
@@ -51,3 +52,7 @@ const ShowUsers = ({ users }) => users.length > 0 ?
   </StyledWrapper> : <StyledEmpty>couldn't find any users</StyledEmpty>;
 
 export default ShowUsers;
+
+ShowUsers.propTypes = {
+  users: PropTypes.array.isRequired
+};

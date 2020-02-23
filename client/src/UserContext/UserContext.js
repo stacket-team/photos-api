@@ -1,4 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from "react-router-dom";
 import gql from 'graphql-tag';
 import { useQuery } from "@apollo/react-hooks";
@@ -47,6 +48,10 @@ export const UserContextProvider = ({ children }) => {
   )
 };
 
+UserContextProvider.propTypes = {
+  children: PropTypes.object.isRequired,
+};
+
 export const useAuthorization = (condition) => {
   const [fetchedUser, setFetchedUser] = useState(undefined);
   const { user } = useContext(UserContext);
@@ -63,6 +68,10 @@ export const useAuthorization = (condition) => {
   }, [user, condition, history]);
 
   return { user: fetchedUser };
+};
+
+useAuthorization.propTypes = {
+  condition: PropTypes.bool.isRequired
 };
 
 export default UserContext;
