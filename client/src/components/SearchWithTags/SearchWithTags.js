@@ -51,7 +51,9 @@ const StyledSelect = styled.select`
   border: none;
 `;
 
-const StyledOption = styled.option``;
+const StyledOption = styled.option`
+  background: none;
+`;
 
 const SearchWithTags = ({ search, tag, tags, placeholder }) => (
   <>

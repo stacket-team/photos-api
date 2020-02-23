@@ -9,6 +9,7 @@ const StyledBackground = styled.div`
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
 `;
 
 const StyledWrapper = styled.div`
@@ -17,6 +18,7 @@ const StyledWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 9999;
 `;
 
 const Modal = ({ children, component: Component, big, props, buttonProps, button: StyledButton }) => {
