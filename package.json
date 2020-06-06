@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/stacket-team/photos-api#readme",
   "dependencies": {
-    "apollo-server-express": "^2.9.16",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "concurrently": "^5.1.0",
     "cors": "^2.8.5",
